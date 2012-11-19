@@ -1,0 +1,28 @@
+%h3.span3 酒店总账记录管理
+%div.pull-right
+  -if can?(:new, Transfer)
+    = link_to '新建酒店转账记录', new_transfer_path
+%table.table.table-hover 
+  %tbody
+    %tr
+      %th='酒店名称'
+      %th='预定号'
+      %th='间夜' 
+      %th='扣款金额'
+      %th='转入金额'
+      %th='当前余额'
+   
+  - @hotel_ledgers.each do |c|
+    %tr
+      %td= c.hotel.name
+      %td= link_to c.order_group ? c.order_group.ref : "酒店转帐",c.order_group ? "/orgroups?date=#{c.order_group.created_at.strftime('%Y-%m-%d')}&hotel_id=#{c.hotel.id}" : "javascript:void(0);" , :title => "查看用房明细"
+      %td= c.night
+      %td=format_money c.cosumption
+      %td=format_money c.add_amount
+      %td=format_money c.credit
+     
+=will_paginate @hotel_ledgers    
+        
+        
+
+

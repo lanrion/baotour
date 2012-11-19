@@ -1,0 +1,55 @@
+
+  <div class="control-group ">
+    &nbsp;&nbsp;&nbsp;&nbsp;VIP卡号：
+       <%= f.input_field :vip, :placeholder => "VIP卡号", :required => "required", :maxlength=>"255"%>
+       <%= f.error :vip, :id => "cool_error" %>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户全称：
+      <%= f.input_field :name, :placeholder => "全称", :required => "required", :maxlength=>"255" %>
+      <%= f.error :name, :id => "cool_error" %>
+	</div>
+	<div class="control-group ">
+     &nbsp;&nbsp;客户简称：
+      <%= f.input_field :aka, :placeholder => "简称", :required => "required", :maxlength=>"255" %>
+       <%= f.error :aka, :id => "cool_error" %>
+	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户电话：
+      <%= f.input_field :tel, :placeholder => "电话", :required => "required", :maxlength=>"255" %>
+       <%= f.error :tel, :id => "cool_error" %>
+  </div>    
+
+  <div class="control-group">
+   &nbsp;&nbsp;客户传真：
+      <%= f.input_field :fax, :placeholder => "传真", :required => "required", :maxlength=>"255" %>
+       <%= f.error :fax, :id => "cool_error" %>
+   
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;充值点数：
+   <%= f.input_field :credit, :placeholder => "点数", :maxlength=>"255" %>
+    <%= f.error :credit, :id => "cool_error" %>
+  </div>   
+  
+  <div class="control-group">
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;负责人：
+     <%= f.input_field :manager, :placeholder => "负责人", :required => "required", :maxlength=>"255", :class => "input-medium" %>
+      <%= f.error :manager, :id => "cool_error" %>
+  
+     &nbsp;负责人手机：
+      <%= f.input_field :mobile, :placeholder => "手机", :required => "required", :maxlength=>"255", :class => "input-small" %>
+      <%= f.error :mobile, :id => "cool_error" %>
+      
+     &nbsp;负责人生日：
+   	<input type="text" placeholder="负责人生日" name="customer[dob]" id="customer_dob" value="<%=@customer.dob%>" class="input-small">  
+  </div>
+  
+  <div class="control-group">
+  
+    客户地址：
+    <%= f.text_area :addr, :placeholder => "尽可能详细，可收快递", :required => "required", :maxlength=>"2000", :rows=>"4", :class=>"span5", :style =>"margin-left: 0px; margin-right: 0px; width: 536px; margin-top: 0px; margin-bottom: 0px; height: 101px; " %>
+    <%= f.error :addr, :id => "cool_error" %>
+  </div>
+  
+
+<script>
+  $(function(){
+    $("#customer_dob").datepicker({dateFormat: "yy-mm-dd",changeYear:true,yearRange: '1950:2020'});
+  })
+</script>

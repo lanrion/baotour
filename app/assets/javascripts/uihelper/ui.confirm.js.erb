@@ -1,0 +1,37 @@
+// confirm
+//
+// jquery
+// jquery.ui.dialog
+
+(function($) {
+  // confirm
+  $.confirm = function(message, callback) {
+    callback = callback || $.noop;
+    
+    _dialog = $(
+      '<div class="wd_zz bd_c6 confirm">' +
+        message +
+      '</div>'
+    ).dialog({
+      autoOpen: true,
+		  width: 250,
+		  draggable: false,
+		  resizable: false,
+		  title: "确认?",
+		  modal: true,
+		  buttons: {
+			  "确定": function() {
+				  $(this).dialog("close");
+			    callback(true);
+			  },
+			  "取消": function() {
+				  $(this).dialog("close");
+			    callback(false);
+			  }
+		  },
+		  close: function() {
+		    $(this).remove();
+		  }
+    });
+  };
+})(jQuery);

@@ -1,0 +1,25 @@
+//beta 001版
+//记录页数：nums
+$.fn.pagenav = function(pages, callback) {
+		var self = this;
+		_id = self.attr("id")
+		if($(".page-list-"+_id).length > 0){
+			return false;
+		};
+	 //$("#"_id+"-list").remove();
+		_pages = parseInt(pages);
+		if(parseInt(_pages) <= 1) return false;
+		var _page_nav = $("<ul style='padding-bottom:10px; border-bottom:1px #999; float:left' class='"+_id+"-list'></ul>");
+		
+	 for(var i=1;i<=_pages;i++) {
+	 	 _page_nav.append("<li class='page-list-"+_id
+	 	 									+"' style='width:24px; margin-left:auto; padding-left:5px;'>"
+	 	 									+"<a class='"+_id+"-pages-list' href='javascript:void(0);' page-num='"+i
+	 	 									+"' style='font-size: 15px;padding: 5px;' id='"+_id+i+"'>"+
+	 	 									i+"</a></li>");
+	 }
+	 
+	 $(self).append(_page_nav);
+	 callback("."+_id+"-pages-list")
+}
+

@@ -1,0 +1,71 @@
+  <div class="control-group">
+    &nbsp;&nbsp;&nbsp;&nbsp;客户简称：
+    <div class="input-append">
+     	 <input class="string required" required="required" size="50" type="text" id="cfull-name" placeholder="输入客户简称关键字匹配填充" value="<%=@aka%>"/>
+    </div> 	 
+     	 <%= f.hidden_field :customer_id, :id => "customer-id" %>
+    &nbsp;&nbsp;&nbsp;&nbsp;财务姓名：
+      <%= f.input_field :name, :id=>"account-name",:placeholder => "财务姓名", :required => "required", :maxlength=>"255" %>
+      <%= f.error :name, :id => "cool_error" %>
+  </div>
+
+  <div class="control-group">
+    &nbsp;&nbsp;&nbsp;&nbsp;转账账号：
+      <%= f.input_field :account, :placeholder => "转账账号", :required => "required", :maxlength=>"255" %>
+       <%= f.error :account, :id => "cool_error" %>
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;转帐银行：
+      <%= f.input_field :bank, :placeholder => "转帐银行", :required => "required", :maxlength=>"255" %>
+       <%= f.error :bank, :id => "cool_error" %>
+  </div>    
+
+  <div class="control-group">
+    &nbsp;&nbsp;&nbsp;&nbsp;转账金额：
+      <%= f.input_field :amount, :placeholder => "转账金额", :required => "required", :maxlength=>"255", :class=>"input-small" %>
+       <%= f.error :amount, :id => "cool_error" %>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收款时间：
+		<input class="string optional required input-small" id="transaction_recv_date" maxlength="255" name="transaction[recv_date]" placeholder="收款时间" size="50" type="text" value="<%=@tran.recv_date%>">    
+    <%= f.error :recv_date, :id => "cool_error" %>
+    
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;创建人：
+	   <%=f.input_field :created_by, :value => current_user.name,:maxlength=>"255", :class => "input-medium", :placeholder => "创建人", :disabled => "disabled"%>
+       <%= f.error :created_by, :id => "cool_error" %>
+  </div>  
+  
+  <div class="control-group">
+    &nbsp;&nbsp;&nbsp;&nbsp;转账备注：
+   	<%= f.text_area :memo, :placeholder => "转账备注", :maxlength=>"255",:class=>"span5", :rows => 5, :style=>"margin-top: 0px; margin-bottom: 0px; height: 130px; margin-left: 0px; margin-right: 0px; width: 521px; "%>
+    <%= f.error :memo, :id => "cool_error" %>
+    </div>
+  
+
+<script>
+$(function() {
+		
+	$("#transaction_recv_date").datepicker({dateFormat: "yy-mm-dd",changeYear:true,changeMonth: true });
+
+	$("#cfull-name").autocomplete({
+			source: "/transactions/search.json",
+			minLength: 1,
+			//async: true,
+			select: function(event, ui) {
+				_ui = ui.item.id.split(",")
+			  $("#customer-id").val(_ui[0]);
+			  $("#transaction_account").val(_ui[2])
+			  $("#transaction_bank").val(_ui[1])
+			  str = ui.item.label;
+				$("#account-name").val(str.split(" ")[2]);
+				$("#transaction_amount").focus();
+				//此处获取vip号
+				//$("#vip").text("vip:"+str.split(" ")[0]);
+			}
+			//onerror: function(msg){
+			//	$.alert(msg);
+			//}
+		});
+		
+});
+
+</script>
+
+

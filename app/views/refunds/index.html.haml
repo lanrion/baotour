@@ -1,0 +1,35 @@
+%h3.span3 退款记录
+  
+%table.table.table-hover 
+  %tbody
+    %tr
+      %th='文档编号'
+      %th='客户简称'
+      %th='操作计调'
+      %th='预定酒店'
+      %th='退款金额'
+      %th='退款说明'
+      %th='退款时间'
+      %th='所属转帐记录'
+      //%th='操作人'
+      //%th='操作'
+   
+  - @refunds.each do |c|
+    %tr
+      %td= c.doc_ref
+      %td= c.transaction.customer.aka
+      %td= c.operator
+      %td= c.sch_hotel
+      %td=format_money c.amount
+      %td= c.memo
+      %td= c.at
+      -if can?(:create,c)
+        %td= link_to c.transaction.customer.aka, edit_transaction_path(c.transaction), :title => "点击编辑"
+      -else
+        %td= c.transaction.customer.aka
+      //%td= '删除'
+=will_paginate @refunds    
+        
+        
+
+

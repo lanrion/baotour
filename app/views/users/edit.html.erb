@@ -1,0 +1,77 @@
+<h3>管理用户</h3>
+<div class='well'>
+ <%= simple_form_for @user do |f|%>    
+  <div class='inputs'>
+   <%= f.input :id, :as => :hidden, :input_html => { :value => @user.id }%> 
+   <%= f.input :name, :label => '用户名'%>
+   <%= f.input :email, :label => 'Email'%>
+   <%= f.input :password, :label => '密码', :required => !@user.id%>
+   <%= f.input :password_confirmation, :label => '密码确认', :required => !@user.id%>
+
+	<div class="input select optional">
+		<label class="select optional" for="user_group">用户组</label>
+		<select class="select optional" id="user_group" name="user[group]">
+		<option value="">选择权限</option>
+		<%= User.groups.each do |g|%>
+			<option value="<%=g.value%>" <%= @user.show_role == g.text ? 'selected' : '' %> ><%=g.text%></option>
+		<%end%>
+   </select> 
+	</div>   
+   
+   <%= f.input :approved, :label => '启用'%>
+  </div>
+  <div class='actions' style="margin-left:100px">
+  <%if can?(:update, User)%>
+  	<%=f.submit '保存', :class => "btn btn-primary"%>
+  <%end%>	
+  </div>
+ <% end %>
+</div>
+<%if not @user.id.blank?%>
+	<h3>管理酒店列表</h3>
+	<% if can?(:manage_to_user, Hotel)%>	
+		<div class="well">
+			 <%Hotel.all.each do |hotel|%>
+				 <label class="checkbox inline">
+				 	 <input type="checkbox" class="manage-hotel" 
+				 	 	<%=@user.check_mhotel(hotel.id).blank? ? '' : 'checked'%> value="<%=hotel.id%>">
+				 	  <%= hotel.name%>
+				 </label>	 
+			 <%end%>
+		</div>
+		<script type="text/javascript">
+			$(".manage-hotel").click(function(){
+			
+				hotel_id = $(this).val()
+				check = $(this).attr("checked")
+				//向该用户添加此酒店
+				$.alert("操作提交中,请稍候...","提示")
+				if(check=="checked"){
+					url = "/hotels/"+hotel_id+"/manage_to_user.json";
+					$.post(url,{user_id: <%=@user.id%>},function() {
+							//$(".ui-button-text").click();
+							$.alert("添加成功");
+							setTimeout('$(".ui-button-text").click();', 600)
+					});
+				} else {
+					url = "/hotels/"+hotel_id+"/detroy_manage_hotel.json";
+					$.post(url,{user_id:<%=@user.id%>},function(){
+						$(".ui-button-text").click();
+						$.alert("取消成功！");
+						setTimeout('$(".ui-button-text").click();', 600)
+					})
+			
+				}
+			})
+
+		</script>
+	<%else%>
+		<div class="well">
+			 <%@user.manage_hotels.includes(:hotel).each do |h|%>
+				 <label class="checkbox inline">
+				 	 <%= h.hotel.name%>
+				 </label>	 
+			 <%end%>
+		</div>	
+	<%end%>	
+<%end%>

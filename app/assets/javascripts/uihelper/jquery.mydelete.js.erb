@@ -1,0 +1,18 @@
+
+//ajax delete 快捷方法 
+(function($) {
+
+	$.mydelete = function(_url,_data,_successcall){
+		$.ajax({
+			type: "DELETE",
+			data: _data,
+			url: _url,
+			success: _successcall,
+			error: function(){
+				$.alert("出错了");
+			}
+		
+		})
+	
+	}
+})(jQuery);

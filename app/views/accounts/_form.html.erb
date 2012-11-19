@@ -1,0 +1,49 @@
+<input type="hidden" id="ac_id" class="hiddenId" value="<%= @customer.id%>"/>
+
+姓名:&nbsp;&nbsp;
+<input type="text" id="a_name" placeholder="必填 姓名">&nbsp;&nbsp;
+
+银行:&nbsp;&nbsp;
+<input type="text" id="a_mobile" placeholder="必填 银行">&nbsp;&nbsp;
+
+账号:&nbsp;&nbsp;
+<input type="text" placeholder="必填 账号" id="a_dob" >         
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+<button type="submit" id="save-account" class="btn btn-primary" title="保存">
+保存
+</button>
+
+<script>
+	
+	$("#save-account").click(function() {
+		account = {
+			'account[customer_id]':$("#ac_id").val(),
+			'account[name]':$("#a_name").val(),
+			'account[bank]':$("#a_mobile").val(),	
+			'account[acc]':$("#a_dob").val(),	
+		};
+    $.ajax({
+			type: "post",
+			url: "/accounts.json",
+			dataType: "json",
+			data: account,
+			success: function(msg){
+				if(msg.code == "10001") {
+						$.alert(msg.error);
+						return false;
+				}
+				$.alert(msg.error,"成功", function(){
+					window.location.reload();
+				});	 
+			 },
+			error: function(msg) {
+				$.alert("发生未知错误","错误", function(){
+						window.location.reload();
+				});
+			}
+ 		});
+	})	
+	
+	
+</script>	

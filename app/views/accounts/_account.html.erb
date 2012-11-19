@@ -1,0 +1,27 @@
+<div class="control-group" account-id="<%=account.id%>">
+	<div class="controll" >
+		姓名:&nbsp;&nbsp;
+		<input type="text" id="ua_name<%=account.id%>" value="<%=account.name%>" >&nbsp;&nbsp;
+	
+		银行:&nbsp;&nbsp;
+		<input type="text" id="ua_mobile<%=account.id%>" value="<%=account.bank%>" >&nbsp;&nbsp;
+	
+		账号:&nbsp;&nbsp;
+		<input type="text" id="ua_dob<%=account.id%>" value="<%=account.acc%>">
+	
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<button type="button" account-id="<%=account.id%>" class="update-account btn btn-primary" title="更新">
+		 更新
+		 </button> 
+		 
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<button type="button" account-id="<%=account.id%>" class="destroy-account btn btn-danger" title="删除">
+		 删除
+		 </button> 
+		 
+ </div>
+</div>   
+
+
+
+

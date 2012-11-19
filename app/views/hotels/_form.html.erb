@@ -1,0 +1,47 @@
+<div class="well">
+  <div class="control-group">
+    酒店名称：
+      <%= f.input_field :name, :placeholder => "全称", :required => "required", :maxlength=>"255" %>
+      <%= f.error :name, :id => "cool_error" %>
+  	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;点数：
+   <%= f.input_field :credit, :placeholder => "点数", :maxlength=>"255" %>
+    <%= f.error :credit, :id => "cool_error" %>
+  </div>   
+  
+  <div class="control-group">
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总机：
+   <%= f.input_field :telephone, :placeholder => "总机", :maxlength=>"255" %>
+    <%= f.error :telephone, :id => "cool_error" %>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 传真：
+   <%= f.input_field :fax, :placeholder => "传真", :maxlength=>"255" %>
+    <%= f.error :fax, :id => "cool_error" %>
+  </div>   
+  
+  <div class="control-group">
+    销售部电话：
+   <%= f.input_field :sell_tel, :placeholder => "销售部电话",:class => "input-medium",:maxlength=>"255" %>
+    <%= f.error :sell_tel, :id => "cool_error" %>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;常用联系人：
+   <%= f.input_field :contact_name, :placeholder => "常用联系人",:class => "input-medium", :maxlength=>"255" %>
+    <%= f.error :contact_name, :id => "cool_error" %>
+  </div> 
+  
+  <div class="control-group">
+    常用联系人电话：
+   <%= f.input_field :contact_tel, :placeholder => "常用联系人电话", :maxlength=>"255" %>
+    <%= f.error :contact_tel, :id => "cool_error" %>
+  </div>           
+	<div class="control-group">
+	    地址：
+   <%= f.text_area :addr, :placeholder => "地址",:rows=>"4", :class=>"span5", :style =>"margin-left: 0px; margin-right: 0px; width: 536px; margin-top: 0px; margin-bottom: 0px; height: 101px; "  %>
+    <%= f.error :addr, :id => "cool_error" %>
+	</div>  
+  
+ 	<div class="control-group">
+		<div class="controls" style="margin-left: 80px;">
+			<button type="button" class="btn" onclick="window.history.back()">取消</button>
+	 	 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;  	
+			<button type="submit" class="btn btn-primary">提交信息</button>
+	</div>	
+		  
+</div>  

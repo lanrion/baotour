@@ -1,0 +1,13 @@
+<h3>创建客户</h3>
+<hr/>
+<div class="well">
+	<%= simple_form_for @customer, :html => {:class => "form-horizontal"} do |form| %>
+	<h5>客户信息：</h5>
+	<%= render "/customers/form", :f => form %>
+   <div class="control-group">
+  	<div class="controls" style="postion:center">
+			<button type="submit" class="btn btn-primary">提交</button>
+		</div>	
+	</div>
+</div>
+<%end%>

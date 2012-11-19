@@ -1,0 +1,83 @@
+<h3 class="span3">未收款查询</h3>
+
+<table class="table table-hover">
+  <tbody>
+    <tr>
+			<th>排期Ref</th>
+			<th>旅行社</th>
+			<th>day1</th>
+			<th>day2</th>
+			<th>day3</th>
+			<th>晚餐/加床</th>
+			<th>联系人</th>
+			<th>应收明细</th>
+			<th>总金额</th>
+			<th>已付金额</th>
+			<th>未付金额</th>
+			<th>间夜</th>
+			<th>创建时间</th>
+			<th>创建人</th>
+    </tr>
+  </tbody>
+  <tbody>
+  <%@orders.each do |order|%>
+		<tr>
+		 	<td>
+				<a href="javascript:void(0);"><%=order.order_group.ref%></a>
+			</td>
+			<td>
+				<%=order.customer.aka%> <%=order._operator.name%>
+			</td>
+			<td>
+				<%=order.day_1%>
+			</td>
+			<td>
+				<%=order.day_2%>
+			</td>
+			<td>
+				<%=order.day_3%>
+			</td>
+			<td>
+				<%=order.dinner%>
+			</td>
+			<td>
+				<%=order.guide%>
+			</td>
+			<td>
+				<%=order.fee%>
+			</td>
+			
+			<td>
+			<%=order.sum%>
+			</td>
+			
+			<td>
+			<%=format_money order.coverd_amount%>
+			</td>
+			
+			<td>
+			<%=format_money order.uncoverd_amount%>
+			</td>		
+						
+			<td>
+				<%=order.date%>
+			</td>
+			
+			<td>
+				<%=order.created_at.to_s(:db)%>
+			</td>
+			
+			<td>
+				<%= order.creator%>
+			</td>
+		  
+		</tr>
+	<%end%>
+	</tbody>
+</table>
+<%=will_paginate @orders%>
+
+
+
+
+

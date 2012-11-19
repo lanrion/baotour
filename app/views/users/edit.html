@@ -1,0 +1,21 @@
+%h3 
+  - if @user.id
+    管理用户
+  - else
+    创建用户
+%div.well
+  = simple_form_for @user do |f|
+    = f.error_notification
+    .inputs
+      = f.input :id, :as => :hidden, :input_html => { :value => @user.id }
+      = f.input :name, :label => '用户名'
+      = f.input :email, :label => 'Email'
+      = f.input :password, :label => '密码', :required => !@user.id
+      = f.input :password_confirmation, :label => '密码确认', :required => !@user.id
+      = f.input :group, :label => '用户组', :collection => User.groups, :label_method => :text, :value_method => :value
+      = f.input :approved, :label => '启用'
+    .actions.pull-right
+    -if can?(:update, User)
+      = f.submit '保存'
+  
+  

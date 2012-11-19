@@ -1,0 +1,24 @@
+%h3.span3 发票管理
+%div.pull-right
+
+%table.table.table-hover 
+  %tbody
+    %tr
+      %th='卡号'
+      %th='客户简称'
+      %th='已开发票金额'
+      %th='未开发票金额'
+      %th='新建发票' 
+   
+  - @invoices.each do |c|
+    %tr
+      %td= link_to c.id,  '', :title => "点击编辑"
+      %td= c.customer.aka
+      %td= link_to format_money(c.issued), invoice_details_path(:invoice_id => c.id), :title => "查看该客户已开发票" 
+      %td= format_money c.remain
+      %td= link_to "新建发票", new_invoice_detail_path(:invoice_id => c.id), :title => "新建发票明细"
+=will_paginate @invoices    
+        
+        
+
+

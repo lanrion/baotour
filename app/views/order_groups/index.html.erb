@@ -1,0 +1,930 @@
+<style>
+    label, input { display:block; }
+    input.text { margin-bottom:12px; width:95%; padding: .4em; }
+    fieldset { padding:0; border:0; margin:0px; font-size: 10px; }
+    h1 { font-size: 1.2em; margin: .6em 0; }
+    .ui-dialog .ui-state-error { padding: .3em; }
+    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+    legend{font-size: 15px}
+    ul.dropdown-menu{min-width:0px;}
+</style>
+
+<h3 class='span3'>计调排期</h3>
+
+<div class="span12 no-margin ">
+  <form class="form-inline" action="/orgroups">
+    <input type="text" id="calandar" name="date" class="input-small" placeholder="日期" value="<%= params[:date]||Date.today %>">
+
+   	<select class="input-large" name="hotel_id" id="hotel_id">
+      <option value=" ">请选择酒店</option>
+      <% @hotels.each do |h|%>
+      <option value="<%=h.id%>" 
+      	<%="selected" if h.id.to_s == @hotel_id -%>>
+      	<%=h.name%>
+      </option>
+      <%end%>
+    </select>
+    <button type="submit" class="btn btn-primary">切换</button>
+    <% mhotel = current_user.check_mhotel(@hotel_id).blank? %>
+    <%if mhotel%>
+     <%if !current_user.has_role? :admin%>
+    	<span>注意：你无权限操作此酒店</span>
+     <%end%>
+    <%end%>
+  </form>
+  
+  <table class="table small-font table-hover">
+    <tbody>
+      <tr>
+        <th>Ref</th>
+        <th><%=@date.day%>号 <%=I18n.localize(@date, :format => '%A') %></th>
+        <th><%=(@date+1).day%>号 <%=I18n.localize(@date+1, :format => '%A') %></th>
+        <th><%=(@date+2).day%>号 <%=I18n.localize(@date+2, :format => '%A') %></th>
+        <th>晚餐/加床</th>
+        <th>应付明细</th>
+        <th>金额</th>
+        <th>间夜</th>
+        <th>备注</th>
+        <%if can?(:_save_group,OrderGroup)%>
+        	<th>操作</th>
+        <%end%>
+      </tr>
+    <%@orgroups.each do |group|%>
+      <tr>
+        <td>
+          <input type="hidden" value="<%=group.id%>" id="_<%=group.id%>"/>
+          <input type="text" id="gref_<%=group.id%>" class="shorter small-font" value="<%=group.ref%>" disabled/>
+        </td>
+        <td>
+          <input type="text" id="gday_1_<%=group.id%>" class="longer small-font" value="<%=group.day_1%>"/>
+        </td>
+        <td>
+          <input type="text" id="gday_2_<%=group.id%>" class="shorter small-font" value="<%=group.day_2%>"/>
+        </td>
+        <td>
+          <input type="text" id="gday_3_<%=group.id%>" class="shorter small-font" value="<%=group.day_3%>"/>
+        </td>
+        <td>
+          <input type="text" id="gdinner_<%=group.id%>" class="shorter small-font" value="<%=group.dinner%>"/>
+        </td>
+        <td>
+          <input type="text" id="gfee_<%=group.id%>" class="input-large small-font" value="<%=group.fee%>" onblur="caculate(this)" sum_id="gsum_<%=group.id%>"/>
+        </td>
+        <td>
+          <input type="text" id="gsum_<%=group.id%>" class="shorter small-font" value="<%= group.sum%>" disabled/>
+        </td>
+        <td>
+          <input type="text" id="gnight_<%=group.id%>" class="tiny small-font" value="<%=group.night%>"/>
+        </td>
+        <td>
+          <textarea id="gmemo_<%=group.id%>" class="input-small small-font" maxlength="500"><%=group.memo%></textarea>
+        </td>
+        
+		    <%if can?(:_save_group,OrderGroup)%>
+		     
+		      <td>
+		        <div class="btn-group">
+		          <a class="btn dropdown-toggle <%=group.done? ? 'btn-inverse' : 'btn-primary'%>" data-toggle="<%=group.done? ? '' : 'dropdown'%>" href="<%=group.done? ? 'javascript:;' : '#'%>">
+		            操作
+		            <span class="caret"></span>
+		          </a>
+		          <ul class="dropdown-menu">
+		            <li><a href="#" id="save" onClick="save_order_group('_<%=group.id%>')">保存</a></li>
+		            <li class="divider"></li>
+		            <li>
+		            	<a ogroup-url="<%=make_done_orgroup_path(group.id)%>" href="javascript:void(0);" class="ogroup-done">
+		            		完成
+		              </a>
+		            </li>
+		          </ul>
+		          <a href="#" id="save" onClick="save_order_group('_<%=group.id%>')">保存</a>
+		        </div>
+		      </td>
+        <%end%>
+      </tr>
+      <%end%>
+     <%if can?(:_save_group,OrderGroup)%> 
+      <tr>
+        <td>
+          <input type="text" name="ref" id="gref" class="input-small shorter small-font" placeholder="必填"/>
+        </td>
+        <td>
+          <input type="text" name="day_1" id="gday_1" class="longer small-font"/>
+        </td>
+        <td>
+          <input type="text" name="day_2" id="gday_2" class="shorter small-font"/>
+        </td>
+        <td>
+          <input type="text" name="day_3" id="gday_3" class="shorter small-font"/>
+        </td>
+        <td>
+          <input type="text" name="dinner" id="gdinner" class="shorter small-font"/>
+        </td>
+        <td>
+          <input type="text" name="fee" id="gfee" class="input-large small-font" onblur="caculate(this)" sum_id="gsum" placeholder="必填"/>
+        </td>
+        <td>
+          <input type="text" name="sum" id="gsum" class="shorter small-font" disabled/>
+        </td>
+        <td>
+          <input type="text" name="night" id="gnight" class="tiny small-font" placeholder="必填"/>
+        </td>
+        <td>
+          <textarea id="gmemo" class="input-small small-font" maxlength="500" row='1'></textarea>
+        </td>
+        <td>
+          <button class="btn btn-primary" id="save_new_group">保存</button>
+        </td>
+      </tr>
+	<%end%>
+    </tbody>
+  </table>
+</div>
+
+<h3 class='span3'>排期明细</h3>
+<table class='table small-font'>
+<tbody>
+<tr>
+  <th>Ref</th>
+  <th>旅行社</th>
+  <th><%=@date.day%>号 <%=I18n.localize(@date, :format => '%A') %></th>
+  <th><%=(@date+1).day%>号 <%=I18n.localize(@date+1, :format => '%A') %></th>
+  <th><%=(@date+2).day%>号 <%=I18n.localize(@date+2, :format => '%A') %></th>
+  <th>晚餐/加床</th>
+  <th>联系人</th>
+  <th>应收明细</th>
+  <th>金额</th>
+  <th>间夜</th>
+  <th>状态</th>
+  <%if can?(:update,Order)%>
+  	<th>操作</th>
+  <%end%>
+</tr>
+<% igroup = 1%>
+<%@orgroups.each do |group|%>
+	<% igroup = igroup+1 %>
+  <%group.orders.each do |order|%>
+    <tr style="background: #<%=igroup.to_i.odd? ? "FF6600" : "cce8cf"%>" >
+			<td>
+				<input type="hidden" name="order_group" id="group_<%=order.id%>" value="<%=group.id%>"/>
+				<input type="text" id="gref-<%=order.id%>" class="input-small shorter small-font ref-search" value="<%=group.ref%>" <%= order.done ? "disabled" : ""%>/>
+			</td>
+			<td>
+			  <input type="hidden" name="customer_id" id="customer_id_<%=order.id%>" value="<%=order.customer_id%>"/>
+    		<input type="hidden" name="operator" id="operator_id_<%=order.id%>" value="<%=order.operator%>"/>
+    		<input type="hidden" name="customer_aka" id="customerAka-<%=order.id%>" value="<%=order.customer.aka%>"/>
+				<input type="hidden" name="operator_name" id="operatorName-<%=order.id%>" value="<%=order._operator.name%>"/>
+				<input type="hidden" name="coverd_amount" id="coverd_amount-<%=order.id%>" value="<%=order.coverd_amount%>"/>
+				<input type="hidden" name="uncoverd_amount" id="uncoverd_amount-<%=order.id%>" value="<%=order.uncoverd_amount%>"/>
+				
+ 				 <!-- 隐藏订单备注 -->
+		 		<input type="hidden" id="memo-<%= order.id%>" value="<%= order.memo%>"/>				
+				
+		<input type="text" id="agency_<%= order.id%>" class="longer small-font co_search" value="<%=order.customer.aka%> <%=order._operator.name%>"/>
+			</td>
+			<td>
+				<input type="text" name="day_1" id="oday_1_<%=order.id%>" class="longer small-font" value="<%=order.day_1%>"/>
+			</td>
+			<td>
+				<input type="text" name="day_2" id="oday_2_<%=order.id%>" class="shorter small-font" value="<%=order.day_2%>"/>
+			</td>
+			<td>
+				<input type="text" name="day_3" id="oday_3_<%=order.id%>" class="shorter small-font" value="<%=order.day_3%>"/>
+			</td>
+			<td>
+				<input type="text" name="dinner" id="odinner_<%=order.id%>" class="shorter small-font" value="<%=order.dinner%>"/>
+			</td>
+			<td>
+				<input type="text" id="oguider_<%=order.id%>" class="longer small-font guider-search" value="<%=order.guide%>"/>
+			</td>
+			<td>
+				<input type="text" name="fee" id="ofee_<%=order.id%>" class="input-large small-font" onblur="caculate_order(<%=order.id%>)" sum_id="osum" value="<%=order.fee%>"/>
+			</td>
+			<td>
+				<input type="text" name="sum" id="osum_<%=order.id%>" class="shorter small-font" value="<%=order.sum%>" disabled/>
+			</td>
+			<td>
+				<input type="text" name="night" id="onight_<%=order.id%>" class="tiny small-font" value="<%=order.date%>"/>
+			</td>
+			
+			<td id="odone-<%=order.id%>">
+			<%if !order.done%><%=order.all_coverd? ? "覆盖" : "未覆盖"%><%else%>已完成<%end%>
+			</td>
+			<%if can?(:update, Order)%>
+				<%if mhotel != true%>
+      <td>
+        <div class="btn-group">
+          <a class="btn dropdown-toggle <%=order.done? ? 'btn-inverse' : 'btn-primary'%>" data-toggle="<%=order.done? ? '' : 'dropdown'%>" href="<%=order.done? ? 'javascript:void(0);' : '#'%>">
+            操作
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+            	<a href="javascript:void(0);" data-id="<%=order.id%>" class="look-fund">查看扣款</a>
+            </li>
+            <li>
+            	<a href="javascript:void(0);" data-id="<%=order.id%>" class="update-order">更新</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+       <%else%>
+       	<%if current_user.has_role? :admin%>
+       		 <td>
+        <div class="btn-group">
+          <a class="btn dropdown-toggle <%=order.done? ? 'btn-inverse' : 'btn-primary'%>" data-toggle="<%=order.done? ? '' : 'dropdown'%>" href="<%=order.done? ? 'javascript:void(0);' : '#'%>">
+            操作
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+            	<a href="javascript:void(0);" data-id="<%=order.id%>" class="look-fund">查看扣款</a>
+            </li>
+            <li>
+            	<a href="javascript:void(0);" data-id="<%=order.id%>" class="update-order">更新</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+       	<%else%>
+       		<td><input class="btn btn-warning" type="button" value="无权限"/></td>
+       	<%end%>	
+       <%end%>
+      <%end%>
+    </tr>
+  <%end%>
+<%end%>
+
+<%if can?(:create,Order)%>
+<tr>
+  <td>
+  	<input type="hidden" name="order_group" id="orgroup_id"/>
+    <input type="text" name="ref" id="oref" class="input-small shorter small-font ref-search" placeholder="必填"/>
+  </td>
+  <td>
+    <input type="hidden" name="customer_id" id="customer_id"/>
+    <input type="hidden" name="operator" id="operator_id"/>
+
+    <input type="text" name="agency" id="agency" class="longer small-font co_search" placeholder="必填 旅行社"/>
+  </td>
+  <td>
+    <input type="text" name="day_1" id="oday_1" class="longer small-font" placeholder="day_1"/>
+  </td>
+  <td>
+    <input type="text" name="day_2" id="oday_2" class="shorter small-font" placeholder="day_2"/>
+  </td>
+  <td>
+    <input type="text" name="day_3" id="oday_3" class="shorter small-font" placeholder="day_3"/>
+  </td>
+  <td>
+    <input type="text" name="dinner" id="odinner" class="shorter small-font" placeholder="晚餐"/>
+  </td>
+  <td>
+    <input type="text" id="oguider" class="longer small-font guider-search" placeholder="联系人"/>
+    <input type="hidden" name="oguider" id="oguider_id"/>
+  </td>
+  <td>
+    <input type="text" name="fee" id="ofee" class="input-large small-font" onblur="caculate(this)" sum_id="osum" placeholder="必填 应收明细"/>
+  </td>
+  <td>
+    <input type="text" name="sum" id="osum" class="shorter small-font" disabled/>
+  </td>
+  <td>
+    <input type="text" name="night" id="onight" class="tiny small-font" placeholder="必填"/>
+  </td>
+
+  <td>
+   未覆盖
+  </td>
+
+	<td>
+	  <button class="btn btn-primary" id="save_new_order">保存</button>
+	</td>
+ </tr>
+<%end%> 
+</tbody>
+
+<script>
+  $('#calandar').datepicker({
+					dateFormat: "yy-mm-dd",
+					changeYear:true,
+					changeMonth: true
+			 });
+</script>
+
+<%if can?(:create,Order)%>
+<style type="text/css"> 
+
+.remove-tran {width:auto; float:left;}
+.remove-tran li {width:75px; float:left;}
+.list-style li {width:75px; float:left;}
+.checkbox {width:30px; height:20px; float:left;}
+.mytime {width:120px; float:left;}
+
+#dialog-form .list-style ul {
+	padding-top: 3px;
+}
+#dialog-form .list-style li {
+	display: inline;
+	//padding: 25px; 
+	margin-left: 5px;
+	font-size: 15px;
+}
+
+#dialog-form .input-small {
+	width: 45px;
+}
+
+#dialog-form .page-nav li{
+	display: inline;
+}
+
+#dialog-form .page-nav li a {
+	font-size: 18px;
+	padding: 5px;
+}
+
+
+</style>
+
+<div id="dialog-form" title="查看扣款">
+	<span id="add-order-memo">
+		<textarea placeholder="请输入此排期明细备注" id="order-memo" name="memo" style="margin-left: 0px; margin-right: 0px; width: 356px; "></textarea>
+	</span>
+    <fieldset>
+      <legend>使用记录(<span class="dialog-customer-aka"></span>)：</legend>
+    	  <ul id="fund-usage" class="list-style" style="float:left; border-bottom:1px dashed #999;">
+					<li style="width:120px;">创建时间</li>
+					<li>转账记录</li>
+					<li>使用金额</li>
+					<li>创建人</li>
+					<li>操作</li>
+				</ul>
+				<span id="fund-loading" style="margin-left:200px;">加载中.....</span>
+				<div id="fundusages" class="list-style" style="float:left"></div>
+				<div id="fundu-page" class="page-nav">	</div>
+				<legend>
+					<span style="margin-left:300px;">
+					已付款:&nbsp;<span id="coverd_amount"></span>&nbsp;&nbsp;
+					未付款:&nbsp;<span id="uncoverd_amount"></span>
+					</span>
+				</legend>
+    </fieldset>
+    
+    <fieldset>
+      <legend>转账记录(<span class="dialog-customer-aka"></span>)：</legend>
+       <ul class="list-style" style="padding-bottom:10px; border-bottom:1px dashed #999; float:left">
+					<li style="padding:0px; width:35px;">序号</li>
+					<li style="width:100px;">创建时间</li>
+					<li>已用金额</li>
+					<li>剩余金额</li>
+					<li>创建人</li>
+					<li>扣款金额</li>
+					<li>操作</li>
+			 </ul>
+			<span id="tran-loading" style="margin-left: 200px;">
+				加载中....
+			</span>
+			<div id="transcations" class="list-style"></div>
+			<div id="tran-page" class="page-nav">	</div>
+    </fieldset>
+</div>
+
+
+<script>
+
+	$(".ogroup-done").click(function(){
+		var self = this;
+		url = $(self).attr("ogroup-url");
+		$.confirm("你确认完成此计调排期吗?",function(ensure){
+			if(ensure) {
+				$.alert("处理中,请稍候....","提示");
+				$.post(url,{hotel_id: $("#hotel_id").val()},function(msg){
+					$(".ui-button-text").click();
+					if(msg.code == "10001"){
+						$.alert(msg.prompt);
+						return false;
+					};
+					$.alert(msg.prompt,"提示", function(){
+						window.location.reload();
+					});
+				})
+			}
+		})
+	
+	});
+
+		//获取转账记录
+	var _tran = '<ul class="remove-tran" id="trans-${id}">'+
+     		'<li class="checkbox"  style="width:35px; margin-left:auto; padding-left:5px;">'+
+     			'<a href="/transactions/${id}/edit" target="_blank" title="跳转到此转账记录">${id}</a>'+
+     		'</li>'+
+				'<li class="mytime" title="${created_at}" style="height: 20px; width:100px;">'+
+				'${created_at}</li>'+
+				'<li id="used-${id}" class="money-format" money="${used||0}">${used||0}</li>'+
+				'<li id="remain-${id}" value="${remain}" class="money-format" money="${remain}">${remain}</li>'+
+				'<li>${created_by}</li>'+
+				'<li>'+
+					'<input type="text" class="input-small cash-money" id="cash_${id}" placeholder="金额">'+
+				'</li>'+
+				'<li>'+
+				'<input data-id="${id}" type="button" class="reduce-fund btn btn-primary cash-money" value="确认">'+
+				'</li>'+
+			'</ul>';
+			
+		//获取使用记录	
+	var _fund = '<ul class="remove-fund fund-${id}" style="float:left">'+
+					'<li style="width:120px;" class="mytime" title="${created_at}">${created_at}</li>'+
+					'<li><a href="/transactions/${transaction_id}/edit" target="_blank" title="跳转到此转账记录">'+
+					'${transaction_id}</a></li>'+
+					'<li class="money-format" money="${usage_amount}">${usage_amount}</li>'+
+					'<li>${creator}</li>'+
+					'<li><button title="删除" data-id="${id}" class="removeAction btn btn-danger" >删除</button></li>'+
+				'</ul>'; 			
+				
+	jQuery.template("Trans", _tran);
+	jQuery.template("Funds", _fund);
+			
+  $(".look-fund").click(function() {
+  	$(".remove-tran").remove();
+    $(".remove-fund").remove();
+    $("#fund-loading").show();
+    $("#tran-loading").show();
+    $( "#dialog-form" ).dialog("open");
+    _order_id = $(this).attr("data-id");
+		_customer_id = $("#customer_id_"+_order_id).val();
+		_customer_aka = $("#customerAka-"+_order_id).val();
+  	$(".dialog-customer-aka").text(_customer_aka);
+		
+		$("#order-memo").val($("#memo-"+_order_id).val());
+		$("#save-order-memo").attr("data-action", "add-memo-"+_order_id);
+		
+		var add_memo = '<input type="button" class="btn btn-primary add-memo" value="确认">'
+		$(".add-memo").remove();
+		$("#add-order-memo").append(add_memo);
+	 	$(".add-memo").click(function(){
+	 		$.confirm("你确认更新此备注吗？", function(ensure){
+	 		 if(ensure){
+		 		  _memo = $("#order-memo").val();
+					url = "/orders/"+_order_id+"/add_memo.json"
+					$.post(url,{memo: _memo},function(){
+						$("#memo-"+_order_id).val(_memo);
+						$.alert("更新成功！");
+					});
+				}
+	 		})
+		});
+		//调用转账记录函数，默认为第1页
+		get_trans(_customer_id,"1", _order_id)
+		get_fund_usage(_customer_id, _order_id)
+
+  });//弹出框结束
+  
+  //封闭获取使用记录的
+  function get_fund_usage(customer_id, order_id) {
+		//获取使用记录
+		url = "/fusages.json";
+		_data = {
+			"customer_id": customer_id,
+			"order_id": order_id		
+		 };
+		$.get(url,_data,function(_funds) {
+			$.each(_funds.fusage_data, function(i, fund){
+				$("#fundusages").append(jQuery.tmpl("Funds",fund)).fadeIn('slow');
+			});
+			$(".mytime").mytime();
+			
+			//格式化金额
+			$(".money-format").mymoney();
+			
+			$("#fund-loading").fadeOut();
+			
+			$("#coverd_amount").text(_funds.order_data.coverd_amount);
+  		$("#uncoverd_amount").text(_funds.order_data.uncoverd_amount);
+  		delete_fusage($(".removeAction"));
+  		
+		});  
+  }; 
+  
+  //删除
+  function delete_fusage(selector) {
+		selector.click(function(){
+			_id = $(this).attr("data-id");
+			$.confirm("删除后将会还原该转账记录的未使用金额，你确认要删除此使用记录吗？",function(eture){
+					if(eture){
+						$.mydelete("/fusages/"+_id+".json",{id:_id},function(fusage){
+						//	$.alert("删除成功！");
+							$("#coverd_amount").text((fusage.coverd_amount).formatMoney());
+  						$("#uncoverd_amount").text((fusage.uncoverd_amount).formatMoney());
+  						$("#remain-"+fusage.tran_id).text((fusage.remain).formatMoney());
+  						$("#used-"+fusage.tran_id).text((fusage.used).formatMoney());
+  						$("#odone-"+fusage.order_id).text("未覆盖")
+							$(".fund-"+fusage.id).slideUp('normal',function(){
+								$(this).remove();
+							});
+							
+						})
+					}					
+			});
+		});
+  }; 
+  
+  //封装获取转账记录
+  function get_trans(customer_id,page_index,order_id) {
+  	$("#tran-loading").show();
+  		//获取转账记录,并绑定扣款功能
+		trurl = "/transactions/get_transactions.json";
+		_tdata = {
+			"customer_id": customer_id,
+			"page": page_index
+		};
+		
+		$.get(trurl, _tdata, function(_trans) {
+	    $.each(_trans.tran_data, function(i, tran) {
+        $("#transcations").append(jQuery.tmpl("Trans", tran)).fadeIn('slow');
+      });
+      
+      $(".mytime").mytime();
+ 			$("#tran-loading").fadeOut(); 
+ 			
+ 			pages = _trans.pages;
+ 			
+			$("#tran-page").pagenav(pages,function(page_dom){
+						var self = this;
+					 $(page_dom).click(function(){
+					 		$(page_dom).css("color","");
+					 		//$(".remove-tran").slideUp('fast',function(){
+					 			$(".remove-tran").remove();
+					 	//	})
+					 	  _pageIndex = $(this).attr("page-num");
+					 	  $("#tran-page"+_pageIndex).css("color","red");
+					 	  get_trans(customer_id,_pageIndex,order_id)
+					 })
+				});
+ 			
+      //扣款操作,同时更新此订单的状态
+      $(".reduce-fund").click(function() {
+      	_tranId = $(this).attr("data-id");
+      	_cash = $("#cash_"+_tranId).val();
+      	if(!(/^(\+|-)?\d+$/.test( _cash ))|| _cash <= 0) {
+      		$.alert("扣款金额必须为整数值!","扣款",function(){
+      			$("#cash_"+_tranId).focus();
+      		});
+      		return false;
+      	};
+      	
+  	    $.confirm("你确认要从中扣除"+_cash+"元金额吗?",function(ensure) {
+  	    	if(ensure){
+  	      	reduce_url = "/transactions/"+_tranId+"/reduce_cash.json";
+						_rdata = {
+							"cash": _cash,
+							"order_id": order_id,
+							"ogroup_id": $("#group_"+order_id).val()
+						};
+						
+					//	$.alert("扣款中....");
+						
+						//禁掉当前扣款未成功返回时所有的扣款按钮
+						$(".cash-money").attr("disabled","disabled")
+						
+						//"10001"表示因其他原因失败
+				   	$.post(reduce_url, _rdata ,function(result){
+				   	  //$(".ui-button-text").click();
+				   	  $(".cash-money").removeAttr("disabled")
+				   	  if(result.code == "10001"){
+				   	  	$.alert(result.prompt);
+				   	  	return false;
+				   	  }
+				   		//确定后改变页面上的值
+							$.alert("扣款成功！");
+							$(".cash-money").removeAttr("disabled")
+							$("#coverd_amount").text((result.coverd_amount).formatMoney());
+							$("#uncoverd_amount").text((result.uncoverd_amount).formatMoney());
+							$("#cash_"+_tranId).val("")
+							$("#used-"+result.tran_id).text((result.used).formatMoney());
+							$("#remain-"+result.tran_id).text((result.remain).formatMoney());
+							//页面添加此使用记录一条
+							$("#fundusages").append(jQuery.tmpl("Funds",result.fusage_data));
+							delete_fusage($(".removeAction", $(".fund-"+result.fusage_data.id)));
+							$(".mytime").mytime();
+							//$(".money-format").mymoney();
+							if(result.uncoverd_amount == 0){
+								$("#odone-"+order_id).text("覆盖")
+							}else{
+								$("#odone-"+order_id).text("未覆盖")
+							}
+  					});
+  	    	}
+  	    });
+      });//扣款结束
+      
+		});
+  };
+  
+  $("#dialog-form").dialog({
+      autoOpen: false,
+      height: 650,
+      width: 650,
+      buttons: {
+          "关闭": function() {
+          	 			$(this).dialog("close");
+          	 }
+      },
+      close: function() {
+          // $(this).dialog("close");
+          $(".remove-tran").remove();
+          $(".remove-fund").remove();
+          $("#fund-loading").show();
+    			$("#tran-loading").show();
+      }
+  });  
+  
+	//更新order
+	$(".update-order").click(function(){
+		_id = $(this).attr("data-id");
+		_cdata = {
+			"order[customer_id]": $("#customer_id").val() || $("#customer_id_"+_id).val(),//客户
+		//	"order[order_group_id]": $("#orgroup_id").val(),//order_group_id
+			"order[operator]": $("#operator_id").val() || $("#operator_id_"+_id).val(),//计调人
+			"order[guide]": $("#oguider_"+_id).val(),//联系人
+			"order[day_1]": $("#oday_1_"+_id).val(),
+			"order[day_2]": $("#oday_2_"+_id).val(),
+			"order[day_3]": $("#oday_3_"+_id).val(),
+			"order[dinner]": $("#odinner_"+_id).val(),//晚餐
+			"order[date]": $("#onight_"+_id).val(),
+			"order[fee]": $("#ofee_"+_id).val(),//应收明细
+			"order[sum]": $("#osum_"+_id).val(),//金额
+			"update_ref": $("#gref-"+_id).val(),
+			"current_date": $("#calandar").val()
+		};
+		
+	 if(isblink(_cdata["order[customer_id]"] )|| isblink(_cdata["order[operator]"]) || isblink($("#agency_"+_id).val())){
+			$.alert("旅行社 不能为空且必须通过自动匹配填充!","操作错误", function(){
+				$("#agency_"+_id).select();
+			});
+			return false;
+		};
+		
+	  if(isblink(_cdata["order[date]"])|| isblink(_cdata["order[fee]"])) {
+			$.alert("应收明细、间夜均不能为空","操作错误", function(){
+			$("#ofee_"+_id).select()
+			$("#onight_"+_id).select();
+		});
+			return false;
+		};	
+		
+		$.confirm("你确认需要更新此订单吗？", function(entrue){
+			if(entrue){
+				$.ajax({
+					type: "PUT",
+					data: _cdata,
+					url: "/orders/"+_id+".json",
+					success: function(msg){
+						if(msg.code =="10001"){
+							$.alert(msg.promot,"提示");
+							return false;
+						}
+						$.alert(msg.promot,"更新",function(){
+							window.location.reload();
+						});
+					},
+					error: function(){
+						$.alert("出错");
+					}
+				})
+			}	
+		})	
+	});
+
+ //保存order_detail开始
+	$("#save_new_order").click(function(){
+	
+		_odata = {
+			"order[customer_id]": $("#customer_id").val(),//客户
+			"order[order_group_id]": $("#orgroup_id").val(),//order_group_id
+			"order[operator]": $("#operator_id").val(),//计调人
+			"order[guide]": $("#oguider").val(),//联系人
+			"order[day_1]": $("#oday_1").val(),
+			"order[day_2]": $("#oday_2").val(),
+			"order[day_3]": $("#oday_3").val(),
+			"order[dinner]": $("#odinner").val(),//晚餐
+			"order[date]": $("#onight").val(),
+			"order[fee]": $("#ofee").val(),//应收明细
+			"order[sum]": $("#osum").val(),//金额
+			"write_ref": $("#oref").val(),//获取ref值，后台判断
+			"current_date": $("#calandar").val()
+		};
+		
+	  if(isblink(_odata["write_ref"])){
+			$.alert("Ref 不能为空且，建议通过自动匹配填写！","操作错误", function(){
+				$("#oref").focus();
+			});
+			return false;
+		};
+		
+	 if(isblink(_odata["order[customer_id]"] )|| isblink(_odata["order[operator]"])){
+			$.alert("旅行社 不能为空且必须通过自动匹配填写","操作错误", function(){
+				$("#agency").focus();
+			});
+			return false;
+		};
+		
+		
+		if(isblink(_odata["order[date]"])|| isblink(_odata["order[fee]"])) {
+			$.alert("应收明细、间夜均不能为空","操作错误", function(){
+		});
+			return false;
+		};				
+		
+		$.confirm("你确认保存此排期明细吗？",function(ensure){
+			if(ensure){
+				$.ajax({
+					type: "POST",
+					url: "/orders.json",
+					data: _odata,
+					success: function(msg){
+						if(msg.code == "10001"){
+							$.alert(msg.promot,"Ref错误", function(){
+								$("#oref").focus();
+							});
+							
+							return false;
+						}
+						$.alert(msg.promot,"保存",function(){window.location.reload()});
+					},
+					error: function() {
+						$.alert("发生未知错误，请确保数据的准确性！","错误",function(){window.location.reload()});
+					}
+				});
+			}
+		})
+	});
+	
+  $(".guider-search").autocomplete({
+    source: "/orders/search_guider.json",
+    minLength: 1,
+    select: function(event,ui) {
+			$("#oguider_id").val(ui.item.id);
+    }
+  });
+  
+  //订单Ref的autocomplete
+  $(".ref-search").autocomplete({
+  	source: "orders/serach_orgroup.json?date="+$("#calandar").val()+"&hotel_id="+$("#hotel_id").val(),
+  	minLength: 1,
+  	select: function(event,ui) {
+  		$("#orgroup_id").val(ui.item.id);
+  	}
+  });
+	
+  function caculate_order(obj){
+  	//$(".ui-button-text").click();
+    fee = $("#ofee_"+obj)
+    sum = $("#osum_"+obj)
+    try {
+      amount = eval(fee.val())
+      if (amount==NaN || amount==Infinity){
+		    $.alert("应付金额填写错误", "公式错误");
+		    $(".ui-button-text").click(function(){
+		     	fee.focus();
+		     });
+        canSubmit = false;
+        return;
+      }
+      sum.val(amount)
+      canSubmit = true;
+    }catch(err){
+      $.alert("应付金额填写错误!","公式错误")
+      $(".ui-button-text").click(function(){
+       	fee.focus();
+       });
+      
+      return;
+    }
+  }	
+
+
+  var canSubmit = true;
+  var hotel_id = $('#hotel_id').val();
+  var curDate = '<%=@date%>'
+  
+  function caculate(obj){
+  	//$(".ui-button-text").click();
+    fee = $(obj)
+    sum = $("#"+fee.attr("sum_id"))
+    // alert("#"+fee.attr("sum_id"))
+    try {
+      amount = eval(fee.val())
+      if (amount==NaN || amount==Infinity){
+      $.alert("应付金额填写错误","公式错误");
+      $(".ui-button-text").click(function(){
+       	fee.focus();
+       });
+        
+        canSubmit = false;
+        return;
+      }
+      sum.val(amount)
+      canSubmit = true;
+    }catch(err){
+      $.alert("应付金额填写错误!","公式错误");
+      $(".ui-button-text").click(function(){
+       	fee.focus();
+       });
+      return;
+    }
+  }
+  
+  //更新
+  function save_order_group(id){
+    data = {
+      'hotel_id':$('#hotel_id').val(), 
+      'date':curDate,
+      'gid':$('#'+id).val(),
+      'gref':$('#gref'+id).val(),
+      'gday_1':$('#gday_1'+id).val(),
+      'gday_2':$('#gday_2'+id).val(),
+      'gday_3':$('#gday_3'+id).val(),
+      'gdinner':$('#gdinner'+id).val(),
+      'gfee':$('#gfee'+id).val(),
+      'gsum':$('#gsum'+id).val(),
+      'gnight':$('#gnight'+id).val(),
+      'gmemo':$('#gmemo'+id).val()
+      }
+    // console.log(data);
+    if (data['gref'] && canSubmit) {
+      
+      console.log('can');
+      xhr = $.post("/_update_order_group", data)
+      xhr.success(function(msg){
+      	if(msg.code == "10001"){
+      		$.alert(msg.error,"权限错误",function(){
+      			window.location.reload();
+      		});
+      		return false;
+      	}
+        $.alert("保存成功！", "保存", function(){window.location.reload();});
+      });
+      xhr.error(function(){
+        $.alert("保存失败！请检查数据", "保存");
+      });
+      
+    }else{
+       $.alert("【酒店】，【Ref】, 【应付明细】，【间夜】必须填写！", "无法保存");
+       console.log('false')
+    };
+    
+  }
+  
+  //保存
+  $("#save_new_group").click(function(){
+    
+    data = {
+      'hotel_id':$('#hotel_id').val(), 
+      'date':curDate,
+      'gref':$('#gref').val(),
+      'gday_1':$('#gday_1').val(),
+      'gday_2':$('#gday_2').val(),
+      'gday_3':$('#gday_3').val(),
+      'gdinner':$('#gdinner').val(),
+      'gfee':$('#gfee').val(),
+      'gsum':$('#gsum').val(),
+      'gnight':$('#gnight').val(),
+      'gmemo':$('#gmemo').val()
+      }
+    if (data['hotel_id'] && data['date'] && data['gref']) {
+      xhr = $.post("/_save_order_group", data)
+      xhr.success(function(msg){
+      	if(msg.code == "10001"){
+      		$.alert(msg.error,"权限错误",function(){
+      			window.location.reload();
+      		});
+      		return false;
+      	}
+        $.alert("保存成功！","保存",function(){window.location.reload();});
+      });
+      xhr.error(function(){
+        $.alert("保存失败！请检查数据", "保存");
+      });
+      
+    }else{
+        $.alert("【酒店】，【Ref】, 【应付明细】，【间夜】必须填写！", "无法保存");
+    }
+    
+  });
+
+  $(".co_search").autocomplete({
+    source: "/_customer_operator_search",
+    minLength: 1,
+    select: function(event, ui) {
+      $("#customer_id").val(ui.item.id.split("_")[0]);
+      $("#operator_id").val(ui.item.id.split("_")[1]);
+      str = ui.item.label;
+      $("#contactor").val(str.split(" ")[2]);
+      $("#oday_1").focus();
+
+    }
+  });
+  
+</script>
+<%end%>

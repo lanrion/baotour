@@ -1,0 +1,9 @@
+<h3>查看客户转帐记录</h3>
+<hr/>
+<%= simple_form_for @tran, :url => "", :html => {:class => "form-horizontal"} do |form| %>
+<h5>转帐信息：</h5>
+<div class="well">
+	<%= render "/transactions/form", :f => form %>
+</div>
+
+<% end %>

@@ -1,0 +1,52 @@
+<input type="hidden" id="oc_id" name="operator[customer_id]" class="hiddenId" value="<%= @customer.id%>"/>
+
+姓名:&nbsp;&nbsp;
+<input type="text" id="o_name" placeholder="姓名" name="operator[name]">&nbsp;&nbsp;
+
+手机:&nbsp;&nbsp;
+<input type="text" id="o_mobile" placeholder="手机" name="operator[mobile]" required="required">&nbsp;&nbsp;
+
+生日:&nbsp;&nbsp;
+<input type="text" id="o_dob" placeholder="生日" name="operator[DOB]" id="dob-operator" class="input-small">         
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+<button type="submit" id="save-operator" class="btn btn-primary" title="保存">
+保存
+</button>
+
+<script>
+	$("#o_dob").datepicker({dateFormat: "yy-mm-dd",changeYear:true,yearRange: '1970:2030'});
+	
+	$("#save-operator").click(function() {
+		operator = {
+			'operator[customer_id]':$("#oc_id").val(),
+			'operator[name]':$("#o_name").val(),
+			'operator[mobile]':$("#o_mobile").val(),	
+			'operator[DOB]':$("#o_dob").val(),	
+		};
+    $.ajax({
+			type: "post",
+			url: "/operators.json",
+			dataType: "json",
+			data: operator,
+			success: function(msg){
+				$.alert("保存成功！", "保存", function(){window.location.reload();});			 
+			 },
+			error: function(msg) {
+				var message = "<ul>";
+				
+				if($.parseJSON(msg.responseText).mobile != null) {
+					message = message + "<li>手机号" + $.parseJSON(msg.responseText).mobile+"</li>"
+				};
+				
+				if($.parseJSON(msg.responseText).name != null){
+					message = message + "<li>姓名" + $.parseJSON(msg.responseText).name+"</li>";	
+				 };
+				 
+				 message = message + "</ul>"
+				 $.alert(message);
+				
+			}
+ 		});
+	})
+</script>	

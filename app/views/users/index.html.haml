@@ -1,0 +1,26 @@
+%h3.span3 用户管理
+%div.pull-right
+  -if can?(:new, User)
+    = link_to '创建用户', new_user_path
+  
+%table.table.table-hover 
+  %tbody
+    %tr
+      %th='用户名称'
+      %th='权限组'
+      %th='状态'
+   
+  - @users.each do |user|
+    %tr
+      %td
+        = link_to user.name, user
+      %td= user.show_role
+      %td
+        - if user.approved
+          %span.label.label-success= '可用'
+        - else
+          %span.label= '禁用'
+=will_paginate @users  
+        
+
+

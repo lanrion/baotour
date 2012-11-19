@@ -1,0 +1,98 @@
+- if user_signed_in?
+  .well.nav.nav-list.affix
+    %ul.nav.nav-list
+      %li.nav-header='调度操作'
+      - if params[:controller] == 'schedule'
+        %li.active
+          = link_to '计调排期', orgroups_path
+      - else
+        %li
+          = link_to '计调排期', orgroups_path
+
+      %li.nav-header='财务操作'
+
+      - if params[:controller] == 'receive'
+        %li.active
+          = link_to '收款记录', '#'
+      - else
+        %li
+          = link_to '收款记录', '#'
+
+      - if params[:controller] == 'refund'
+        %li.active
+          = link_to '退款记录', '#'
+      - else
+        %li
+          = link_to '退款记录', '#'
+
+      - if params[:controller] == 'transfer'
+        %li.active
+          = link_to '酒店转账记录', '#'
+      - else
+        %li
+          = link_to '酒店转账记录', '#'
+
+      - if params[:controller] == 'transactions'
+        %li.active
+          = link_to '客户转账记录', transactions_path
+      - else
+        %li
+          = link_to '客户转账记录', transactions_path
+
+      - if params[:controller] == 'invoice'
+        %li.active
+          = link_to '发票管理', '#'
+      - else
+        %li
+          = link_to '发票管理', '#'
+
+
+      %li.nav-header='公用查询'
+
+      - if params[:controller] == 'usage'
+        %li.active
+          = link_to '客户消费记录', '#'
+      - else
+        %li
+          = link_to '客户消费记录', '#'
+
+      - if params[:controller] == 'unreceived'
+        %li.active
+          = link_to '未收款查询', '#'
+      - else
+        %li
+          = link_to '未收款查询', '#'
+
+      %li.nav-header='管理操作'
+
+      - if params[:controller] == 'users'
+        %li.active
+          = link_to '用户管理', users_path
+      - else
+        %li
+          = link_to '用户管理', users_path
+
+      - if params[:controller] == 'customers'
+        %li.active
+          = link_to '客户管理', customers_path
+      - else
+        %li
+          = link_to '客户管理', customers_path
+
+      - if params[:controller] == 'hotels'
+        %li.active
+          = link_to '酒店管理', hotels_path
+      - else
+        %li
+          = link_to '酒店管理', hotels_path
+          
+      / - if params[:controller] == 'order_groups'
+      /           %li.active
+      /             = link_to '订单管理', orgroups_path
+      /         - else
+      /           %li        
+      /             = link_to '订单管理', orgroups_path           
+
+
+      
+      

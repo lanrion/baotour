@@ -1,0 +1,276 @@
+<style>
+    body { font-size: 62.5%; }
+    label, input { display:block; }
+    input.text { margin-bottom:12px; width:95%; padding: .4em; }
+    fieldset { padding:0; border:0; margin-top:25px; }
+    h1 { font-size: 1.2em; margin: .6em 0; }
+    .ui-dialog .ui-state-error { padding: .3em; }
+    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+</style>
+
+<h3 class="span3">客户转帐记录</h3>
+<div class="pull-right">
+	<% if can?(:create, Refund)%>
+  	<a href="<%=new_transaction_path%>">新建转帐记录</a>
+  <%end%>	
+</div>
+
+<table class="table table-hover">
+  <tbody>
+    <tr>
+    	<th>收款时间</th>
+      <th>客户简称</th>
+      <th>转帐银行</th>
+      <th>转账账号</th>
+      <th>账号名称</th>
+      <th>转账金额</th>
+      <th>剩余金额</th>
+      <th>已用金额</th>
+      <th>是否存在退款</th>
+      <th>创建人</th>
+     <% if can?(:create, Refund)%>
+      <th>操作</th>
+     <%end%> 
+    </tr>
+  </tbody>
+  <tbody>
+  <%@trans.each do |c|%>
+		<tr>
+		  <td>
+		  <%if can?(:edit, c)%>
+		  	<%=link_to c.recv_date, edit_transaction_path(c), :value=>"#{c.customer.aka}", :title => "点击编辑", :id => "tranId-#{c.id}"%>
+		  <%else%>
+		  	<%=c.recv_date%>
+		  <%end%>
+		  </td>
+		  
+		  <td><%=c.customer.aka%></td>
+		  
+		  <td><%=c.bank%></td>
+		  
+		  <td><%=c.account%></td>
+		  
+		  <td><%= c.name%></td>
+		  
+		  <td><%=format_money c.amount%></td>
+		  
+		  <td><%=format_money c.remain%></td>
+		  
+		  <td><%=format_money c.used%></td>
+		  <input id="transRemain-<%=c.id%>" value="<%=c.remain || 0%>" type="hidden"/>
+		  
+		  <td>
+		  	<%if c.refund_state%>
+		  		<%= link_to '是',refunds_path(:tran_id => c.id), :target => "_blank" %>
+		  	<%else%>
+		  	 否
+		  	<%end%>
+		  </td>
+		  <td><%=c.created_by%></td>
+		 
+		  <%if can?(:create, c)%>
+		 	 <td>
+		 		 	<button id="<%=c.id%>" class="ui-button-text refund">新建退款</button>
+		 	 </td>
+		  <%end%>
+
+		</tr>
+	<%end%>
+	</tbody>
+</table>
+<%=will_paginate @trans%>
+<% if can?(:create, Transaction)%>
+
+<div id="dialog-form" title="新建退款记录">
+    <p class="validateTips"></p>
+    <fieldset>
+    	<input type="hidden" name="refund_tran_id" id="refund-tran-id"/>
+    	<label for="doc-ref">文档编号</label>
+      <input type="text" id="doc-ref" class="text ui-widget-content ui-corner-all"/>
+      
+      <label for="name">客户简称</label>
+      <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" disabled/>
+      
+      <label for="name">操作计调</label>
+      <input type="text" name="name" id="operator" class="text ui-widget-content ui-corner-all"/>
+      
+      <label for="name">预定酒店</label>
+      <input type="text" name="name" id="sch_hotel" class="text ui-widget-content ui-corner-all"/>
+   
+      <label for="name">预定日期</label>
+      <input type="text" name="name" id="sch_date" class="text ui-widget-content ui-corner-all"/> 
+
+      <label for="name">退款说明</label>
+      <textarea type="text" name="name" id="memo" class="text ui-widget-content ui-corner-all" style="margin-top: 0px; margin-bottom: 9px; height: 41px; margin-left: 0px; margin-right: 0px; width: 443px; "/></textarea>            
+      
+      <label for="email">退款金额</label>
+      <input type="text" name="refund_amount" id="amount" value="" class="text ui-widget-content ui-corner-all" />
+      
+      <label for="name">退款帐户</label>
+      <input type="text" name="name" id="refund_acc" class="text ui-widget-content ui-corner-all"/>       
+      
+      <label for="password">退款日期</label>
+      <input type="text" name="refund_time" id="refund_time" value="" class="text ui-widget-content ui-corner-all" />
+    </fieldset>
+</div>
+
+<script>
+
+$(function() {
+
+	$("#refund_time").datepicker({
+					dateFormat: "yy-mm-dd",
+					changeYear:true,
+					changeMonth: true
+			 });
+
+	$("#sch_date").datepicker({
+					dateFormat: "yy-mm-dd",
+					changeYear:true,
+					changeMonth: true
+			 });			 
+ 
+	var  tips = $( ".validateTips" ),
+			 amount = $("#amount"),
+			 refund_time = $("#refund_time"),
+			 doc_ref = $("#doc-ref"),
+			 operator = $("#operator"),
+			 refund_acc = $("#refund_acc"),
+			 sch_date = $("#sch_date"),
+			 sch_hotel = $("#sch_hotel"),
+			 memo = $("#memo"),			 
+			 allFields = $( [] ).add( amount ).add( refund_time ).add( doc_ref ); 
+			 
+ 	function updateTips( t ) {
+            tips.html( t ).addClass( "ui-state-highlight" );
+            //setTimeout(function() {
+                //tips.removeClass( "ui-state-highlight", 500 ).text("");
+               // $("#amount").removeClass("ui-state-error",1000);
+             //   $("#refund_time").removeClass("ui-state-error",1000);
+           // }, 1000 );
+    };
+ 
+  $( "#dialog-form" ).dialog({
+      autoOpen: false,
+      height: 700,
+      width: 500,
+      modal: true,
+      buttons: {
+				  "取消": function() {
+				          $( this ).dialog("close");
+				      },
+          "创建": function() {
+          		var _refund_tran_id = $("#refund-tran-id").val();
+          		var _refund_amount = new Number(amount.val());
+          		var _remain = new Number($("#transRemain-"+_refund_tran_id).attr("value"));
+          		var _refund_time = refund_time.val();
+          		
+          		if(isblink(doc_ref.val())) {
+          			updateTips("文档编号不能为空");
+          			doc_ref.addClass("ui-state-error");
+          			return false;
+          		};
+          		
+          		if(isblink(operator.val())){
+          			updateTips("操作计调不能为空");
+          			operator.addClass("ui-state-error");
+          			return false;
+          		};
+          		
+          		if(isblink(sch_hotel.val())){
+          			updateTips("预定酒店不能为空");
+          			sch_hotel.addClass("ui-state-error");
+          			return false;
+          		};
+
+          		if(isblink(sch_date .val())){
+          			updateTips("预定日期不能为空");
+          			sch_date .addClass("ui-state-error");
+          			return false;
+          		};   
+          		 
+          		if(isblink(refund_acc .val())){
+          			updateTips("预定日期不能为空");
+          			refund_acc .addClass("ui-state-error");
+          			return false;
+          		};           		     		
+          		
+          		if (isNaN(_refund_amount) == true) {
+          			updateTips("退款金额只能是数字");
+          			amount.addClass("ui-state-error");
+          			return false;
+          		};
+          		
+          		if ( _refund_amount <=0){
+          			updateTips("退款金额不能为空值或者负数");
+          			amount.addClass("ui-state-error");
+          			return false;
+          		};
+
+          		if (_refund_amount > _remain) {
+          			updateTips("退款金额不能大于剩余金额");
+          			amount.addClass("ui-state-error");
+          			return false;
+          		};
+          		
+          		if (isblink(_refund_time)) {
+          			updateTips("退款时间不能为空!");
+          			refund_time.addClass("ui-state-error");
+          			return false;
+          		};
+          		
+             _args = {
+             'refund[transaction_id]':_refund_tran_id,
+             'refund[at]':_refund_time,
+             'refund[amount]':_refund_amount,
+             'refund[doc_ref]':doc_ref.val(),
+             'refund[memo]': memo.val(),
+             'refund[operator]': operator.val(),
+             'refund[sch_hotel]': sch_hotel.val(),
+             'refund[sch_date]': sch_date.val(),
+             'refund[refund_acc]': refund_acc.val()
+             };
+             $.confirm("你确认要保存此退款记录吗？",function(etrue){
+						   $.ajax({
+									type: "post",
+									url: "/refunds.json",
+									dataType: "json",
+									data: _args,
+									success: function(msg){
+										if(msg.code=="10001"){
+											$.alert(msg.prompt);
+											return false;
+										}
+										$.alert("保存成功！", "保存", function(){window.location.reload();});	
+									},
+									error: function(msg) {
+										updateTips("出错了，请检查网络或数据格式！");
+									}
+								});
+						});             
+          }
+      },
+      close: function() {
+          allFields.val("").removeClass( "ui-state-error" );
+          tips.text("").removeClass( "ui-state-highlight" );
+      }
+  });
+  
+  $(".refund")
+      .button()
+      .click(function() {
+          $( "#dialog-form" ).dialog("open");
+          //为表单添加数据
+         var _id = $(this).attr("id");
+         $("#refund-tran-id").attr("value", _id); 
+         $("#name").val($("#tranId-"+_id).attr("value"))
+      });
+});
+</script>
+
+<%end%>
+
+
+
+
+

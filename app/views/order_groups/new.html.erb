@@ -1,0 +1,131 @@
+<h3>新建订单</h3>
+<hr/>
+<%= form_for "orgroup",:url => orgroups_path, :html => {:class => "form-horizontal"} do |form| %>
+<h5>用房计划：</h5>
+<div class="well">
+
+ <div class="order-group" data-id="<%=@f_uuid%>">
+ 	<input type="hidden" name="orgroup[][id]" value="<%=@f_uuid%>"/>
+	
+	<!--第一排 -->
+	<div class="control-group">
+		酒店名称:&nbsp;&nbsp;	
+		<select class="input-medium" name="orgroup[][hotel_id]">
+  　		<option value="">选择酒店名称</option>
+  　		<%=	options_for_select(@hotels.collect {|p| [ p.name, p.id ] }) %>
+  　</select>&nbsp;&nbsp;
+		第1天:&nbsp;&nbsp;
+    <input type="text" id="test" name="orgroup[][day_1]" placeholder="计算公式" required="required" class="input-medium">&nbsp;&nbsp;
+		第2天:&nbsp;&nbsp;
+    <input type="text" name="orgroup[][day_2]" placeholder="计算公式" required="required" class="input-medium">&nbsp; &nbsp;
+		第3天:&nbsp;&nbsp;
+    <input type="text" name="orgroup[][day_3]" placeholder="计算公式" required="required" class="input-medium">&nbsp;
+  </div>
+
+	<!--第二排 -->    
+  <div class="control-group">  
+    晚餐公式:&nbsp;&nbsp;
+    <input type="text" name="orgroup[][dinner]" placeholder="计算公式" class="input-medium">&nbsp; &nbsp;
+    间夜:&nbsp;&nbsp;
+    <input type="text" name="orgroup[][night]" class="input-small">&nbsp;&nbsp;
+    小费:&nbsp;&nbsp;
+    <input type="text" name="orgroup[][fee]" class="span1">&nbsp;&nbsp;
+    refs:&nbsp;&nbsp;
+    <input type="text" name="orgroup[][ref]" class="span1">&nbsp;&nbsp;
+    总金额:&nbsp;&nbsp;
+    <input type="text" name="orgroup[][sum]" class="span1">
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <button type="button" data-id="<%=@f_uuid%>" class="btn remove btn-danger">删除</button>
+    &nbsp;&nbsp;
+    <button type="button" class="btn btn-primary" onclick="jw.dialog({iframe:'/users/<%=@f_uuid%>',width:800,height:450});">添加明细</button> 
+  </div><hr/>
+ </div> <!--order-group--> 
+ 
+  <!--继续添加 -->
+	<div class="control-group" style="height:10px">
+ 		<button style="float:right" id="add-orgroup" type="button" class="btn btn-primary">继续添加</button> 
+	</div>
+  
+</div>  
+
+
+ <div style="width:750px;height:18px" >
+ 		<button style="float:right" type="button" data-action="add" class="btn btn-primary" title="继续添加">
+ 			添加
+ 		</button> 
+  </div> 
+  
+    <div class="control-group">
+  	<div class="controls" style="postion:center">
+			<button type="button" class="btn" onclick="window.history.back()">取消</button>
+		  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;  	
+			<button type="submit" class="btn btn-primary">提交信息</button>
+		</div>	
+	</div> 
+
+</div>
+<%end%>
+    
+<script>
+
+//删除节点
+	$(".remove").click(function(){
+		var _id = $(this).attr("data-id");
+		$(this).parents("div[data-id="+_id+"]").remove();
+	});
+
+	var orgroup_id = 1;
+	$("#add-orgroup").click(function(){
+		//$.alert( Math.uuidFast());
+		var _id = Math.uuidFast();
+		var options = "<%= get_options(@hotels)%>"
+		
+		var orgroup = ' <div class="order-group" data-id="'+_id+'">'+
+				 '<input type="hidden" name="orgroup[][id]" value="'+_id+'">'+
+					'<div class="control-group">'+
+						'酒店名称:&nbsp;&nbsp;&nbsp;	'+
+						'<select class="input-medium" name="orgroup[][hotel_id]">'+
+						  '<option value="">选择酒店名称</option>'+
+					　		 options+
+					　'</select>&nbsp;&nbsp;&nbsp;'+
+						'第1天:&nbsp;&nbsp;&nbsp;'+
+						'<input type="text" name="orgroup[][day_1]" placeholder="计算公式" required="required" class="input-medium">&nbsp;&nbsp;&nbsp;'+
+						'第2天:&nbsp;&nbsp;&nbsp;'+
+						'<input type="text" name="orgroup[][day_2]" placeholder="计算公式" required="required" class="input-medium">&nbsp; &nbsp;'+
+						'第3天:&nbsp;&nbsp;&nbsp;'+
+						'<input type="text" name="orgroup[][day_3]" placeholder="计算公式" required="required" class="input-medium">&nbsp;&nbsp;'+
+					'</div>'+
+					'<div class="control-group">  '+
+						'晚餐公式:&nbsp;&nbsp;&nbsp;&nbsp;'+
+						'<input type="text" name="orgroup[][dinner]" placeholder="计算公式" class="input-medium">&nbsp; &nbsp;&nbsp;'+
+						'间夜:&nbsp;&nbsp;&nbsp;'+
+						'<input type="text" name="orgroup[][night]" class="input-small">&nbsp;&nbsp;&nbsp;'+
+						'小费:&nbsp;&nbsp;&nbsp;'+
+						'<input type="text" name="orgroup[][fee]" class="span1">&nbsp;&nbsp;&nbsp;'+
+						'refs:&nbsp;&nbsp;&nbsp;'+
+						'<input type="text" name="orgroup[][ref]" class="span1">&nbsp;&nbsp;&nbsp;'+
+						'总金额:&nbsp;&nbsp;&nbsp;'+
+						'<input type="text" name="orgroup[][sum]" class="span1">'+
+						'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+
+						'<button type="button" data-id="'+_id+'" class="btn remove btn-danger">删除</button>'+
+						'&nbsp;&nbsp;&nbsp;&nbsp;'+
+						'<button type="button" class="btn btn-primary">添加明细</button> '+
+					'</div><hr>'+
+				 '</div>';
+		
+		$(this).parent().before(orgroup);
+		
+		$(".remove").click(function(){
+			var _id = $(this).attr("data-id");
+			$(this).parents("div[data-id="+_id+"]").remove();
+		});
+	
+	});
+	
+	
+	
+	
+	
+
+</script>
+

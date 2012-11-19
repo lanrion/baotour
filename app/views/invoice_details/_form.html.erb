@@ -1,0 +1,71 @@
+<div class="well">
+	<input type="hidden" name="invoice_detail[invoice_id]" value="<%=@invoice.id%>" >
+  <div class="control-group">
+    <label class="control-label" style="width:60px" for="inputEmail">文档编号</label>
+    <div class="controls" style="margin-left: 80px;">
+      <%= f.input_field :doc_ref, :placeholder => "必填 文档编号", :maxlength=>"255" %>
+      <%= f.error :doc_ref, :id => "cool_error" %>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label" style="width:60px" for="inputEmail">客户简称</label>
+    <div class="controls" style="margin-left: 80px;">
+      <%= f.input_field :aka, :value => @invoice.customer.aka, "disabled" => "disabled" %>
+      <input type="hidden" name="invoice_detail[aka]" value="<%=@invoice.customer.aka%>" >
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label" style="width:60px" for="inputEmail">发票抬头</label>
+    <div class="controls" style="margin-left: 80px;">
+      <%= f.input_field :title, :placeholder => "必填 抬头", :maxlength=>"255" %>
+      <%= f.error :title, :id => "cool_error" %>
+    </div>
+  </div>	
+  
+  <div class="control-group">
+    <label class="control-label" style="width:60px" for="inputEmail">发票项目</label>
+    <div class="controls" style="margin-left: 80px;">
+      <%= f.input_field :project, :placeholder => "项目", :maxlength=>"255" %>
+      <%= f.error :project, :id => "cool_error" %>
+    </div>
+  </div>	  
+	
+  <div class="control-group">
+    <label class="control-label" style="width:60px" for="inputEmail">发票金额</label>
+    <div class="controls" style="margin-left: 80px;">
+   <%= f.input_field :amount, :placeholder => "必填 发票金额", :maxlength=>"255" %>
+    <%= f.error :amount, :id => "cool_error" %>
+    </div>
+  </div> 
+  
+  <div class="control-group">
+    <label class="control-label" style="width:60px" for="inputEmail">发票时间</label>
+    <div class="controls" style="margin-left: 80px;">
+    <input name="invoice_detail[at]" id="invoice_detail_at" class="string optional" type="text" placeholder="必填 发票时间"/>
+    </div>
+  </div>    
+  
+  <div class="control-group">
+    <label class="control-label" style="width:60px" for="inputEmail">发票备注</label>
+    <div class="controls" style="margin-left: 80px;">
+    <textarea name="invoice_detail[memo]" id="memo" class="string optional" type="text" placeholder="备注"></textarea>
+    </div>
+  </div>  
+  
+ 	<div class="control-group">
+		<div class="controls" style="margin-left: 80px;">
+			<button type="button" class="btn" onclick="window.history.back()">取消</button>
+	 	 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;  	
+			<button type="submit" class="btn btn-primary submiter">提交信息</button>
+	</div>	
+		  
+</div> 
+
+<script>
+		$("#invoice_detail_at").datepicker({
+									dateFormat: "yy-mm-dd",
+									changeYear:true,
+									changeMonth: true });
+</script> 

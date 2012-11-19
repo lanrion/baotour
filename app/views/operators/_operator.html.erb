@@ -1,0 +1,26 @@
+	<div class="control-group test" data-id="<%=operator.id%>">
+	  姓名:&nbsp;&nbsp;
+	  <input type="text" id="uop_name<%=operator.id%>" value="<%=operator.name%>" >&nbsp;&nbsp;
+	  
+	  手机:&nbsp;&nbsp;
+	  <input type="text" id="uop_mobile<%=operator.id%>" value="<%=operator.mobile%>">&nbsp;&nbsp;
+	  
+	  生日:&nbsp;&nbsp;
+	  <input type="text" id="uop_dob<%=operator.id%>" value="<%=operator.DOB%>" class="input-small">
+	  
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<button type="button" operator-id="<%=operator.id%>" class="update-operator btn btn-primary" title="更新">
+		 更新
+		 </button> 	
+	
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+		<button type="button" data-id="<%=operator.id%>" class="destroy-operator btn btn-danger" title="删除">
+		 删除
+		 </button>		 	 
+		 
+	</div> 
+	
+<script>
+	$("#uop_dob<%=operator.id%>").datepicker({dateFormat: "yy-mm-dd",changeYear:true,yearRange: '1970:2030'});
+	
+</script>	 

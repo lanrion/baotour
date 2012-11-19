@@ -1,0 +1,31 @@
+%h3.span3 客户管理
+%div.pull-right
+  -if can?(:new,Customer)
+    = link_to '新建客户', new_customer_path
+%table.table.table-hover 
+  %tbody
+    %tr
+      %th='卡号'
+      %th='客户简称'
+      %th='客户全称'
+      %th='电话'
+      %th='传真'
+      %th='地址'
+      %th='负责人'
+      %th='手机' 
+   
+  - @customers.each do |c|
+    %tr
+      %td= link_to c.vip,  edit_customer_path(c), :title => "点击编辑"
+      %td= c.aka
+      %td= c.name
+      %td= c.tel
+      %td= c.fax
+      %td= c.addr
+      %td= c.manager
+      %td= c.mobile
+=will_paginate @customers    
+        
+        
+
+

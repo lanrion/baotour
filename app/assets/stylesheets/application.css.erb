@@ -1,0 +1,95 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+ *= require jquery-ui
+*/
+
+.content {
+  background-color: #eee;
+  padding: 20px;
+  margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
+  -webkit-border-radius: 0 0 6px 6px;
+  -moz-border-radius: 0 0 6px 6px;
+  border-radius: 0 0 6px 6px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  box-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
+
+.nav {
+    font-size: 14px !important;
+}
+
+.nav-width {
+	width: 10% !important;
+}
+
+.no-margin {
+	margin: 0 !important;
+}
+
+.span11 {
+	width: 87% !important;
+
+}
+
+.small-font{
+	font-size: 10px !important;
+}
+.form-label {
+	width: 80px;
+}
+.controls {
+	margin-left: 200px;
+	width: 250px;
+}
+
+table td {
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
+
+
+input {
+	border: 0px !important;
+	border-bottom: 1px solid !important;
+	margin: 0px !important;
+}
+
+.shorter{
+	width: 60px !important;
+}
+
+.longer {
+	width: 120px !important;
+}
+
+.tiny{
+	width: 20px !important;
+}
+
+.span-special ul{	list-style-type: none; border-top:1px solid #999; height:auto; width:100%; display:block; float:left; padding-top:10px;margin:0px;}
+.span-special li{ height:auto; width:100%; float:left;list-style-type: none; min-height: 35px;}
+.span-special input{ float:left;}
+.span-special span{ display:block; float:left; width:100px; font-size:12px; text-align:right; line-height:30px;padding-right: 5px;}
+.span-special p{ display:block; float:left; padding-left:100px; width:100%; line-height:25px; height:25px; margin:auto;}
+
+//autocomplete loading 
+.ui-autocomplete-loading { 
+	background: white url("<%=asset_path 'ui-anim_basic_16x16.gif'%>") right center no-repeat; 
+}
+
+/*.control-group input {*/
+/*	margin-left: 10px;*/
+/*}*/
+
+

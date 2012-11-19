@@ -1,0 +1,34 @@
+<h3>新建客户转帐记录</h3>
+<hr/>
+<%= simple_form_for @tran, :html => {:class => "form-horizontal"} do |form| %>
+<h5>转账信息：</h5>
+<div class="well">
+<%= render "/transactions/form", :f => form %>
+
+ 	<div class="control-group">
+		<div class="controls" style="postion:center">
+			<button type="button" class="btn" onclick="window.history.back()">取消</button>
+	 	 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;  	
+			<button type="submit" class="btn btn-primary submiter">提交信息</button>
+		</div>     
+	</div> 
+</div>
+<% end %>
+<script>
+	$(".submiter").click(function(){
+		if ($("#cfull-name").val().match(/^\s*$/)){
+			$.alert("客户简称不能为空");
+			return false;
+		};
+		
+		if ($("#customer-id").val().match(/^\s*$/)) {
+			$.alert("客户简称非法输入或不存在");
+			return false;
+		};
+				
+		if ($("#account-name").val().match(/^\s*$/)){
+			$.alert("财务姓名不能为空");
+			return false;
+		};		
+	});
+</script>

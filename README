@@ -1,0 +1,19 @@
+Baotour
+========================
+
+This application was generated with the rails_apps_composer gem:
+https://github.com/RailsApps/rails_apps_composer
+provided by the RailsApps Project:
+http://railsapps.github.com/
+
+________________________
+
+Recipes:
+["auth", "controllers", "core", "email", "extras", "frontend", "gems", "git", "init", "models", "railsapps", "readme", "routes", "setup", "testing", "views"]
+
+Preferences:
+{:git=>true, :railsapps=>"none", :dev_webserver=>"webrick", :prod_webserver=>"thin", :database=>"mysql", :templates=>"haml", :unit_test=>"rspec", :integration=>"none", :fixtures=>"none", :frontend=>"bootstrap", :bootstrap=>"less", :email=>"none", :authentication=>"devise", :devise_modules=>"default", :authorization=>"cancan", :starter_app=>"admin_app", :ban_spiders=>true}
+
+________________________
+
+License

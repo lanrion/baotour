@@ -1,0 +1,56 @@
+  <div class="control-group">
+    &nbsp;&nbsp;&nbsp;&nbsp;酒店名称：
+    <div class="input-append">
+     	 <input class="string required" name="hotel_name" size="50" type="text" id="hotel-name" placeholder="必填 输入酒店关键字" value="<%= @hotel_name%>"/>
+    </div> 	
+&nbsp;&nbsp;&nbsp;&nbsp;转账金额：
+   <%= f.input_field :amount, :placeholder => "必填 转账金额", :required => "required", :maxlength=>"255" %>
+       <%= f.error :amount, :id => "cool_error" %>     
+  </div>
+  <div class="control-group">
+    &nbsp;&nbsp;&nbsp;&nbsp;转出账号：
+     <%= f.input_field :out_account, :placeholder => "必填 转出账号", :required => "required", :maxlength=>"255" %>
+       <%= f.error :out_account, :id => "cool_error" %>
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;转出银行：
+      <%= f.input_field :out_bank, :placeholder => "必填 转帐银行", :required => "required", :maxlength=>"255" %>
+       <%= f.error :out_bank, :id => "cool_error" %>
+  </div>    
+
+  <div class="control-group">
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;付款时间：
+		<input class="string optional required " id="transfer-date" maxlength="255" name="transfer[date]" placeholder="必填 收款时间" size="50" type="text" value="">    
+    <%= f.error :date, :id => "cool_error" %>
+    
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;创建人：
+	   <%=f.input_field :by, :value => current_user.name,:maxlength=>"255", :disabled => "disabled" %>
+       <%= f.error :by, :id => "cool_error" %>
+  </div>  
+  
+  <div class="control-group">
+    &nbsp;&nbsp;&nbsp;&nbsp;转账备注：
+   	<%= f.text_area :memo, :placeholder => "转账备注", :maxlength=>"255",:class=>"span5", :rows => 5, :style=>"margin-top: 0px; margin-bottom: 0px; height: 130px; margin-left: 0px; margin-right: 0px; width: 521px; "%>
+    <%= f.error :memo, :id => "cool_error" %>
+    </div>
+    
+<script>
+$(function() {
+	$("#transfer-date").datepicker({
+									dateFormat: "yy-mm-dd",
+									changeYear:true,
+									changeMonth: true
+									});
+									
+	$("#hotel-name").autocomplete({
+		source: "/hotels/search.json",
+		minLength: 1,
+		select: function(event, ui) {
+			$("#transfer_amount").focus();
+		}
+	});		
+	
+});	
+							
+</script>    
+    
+  

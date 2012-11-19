@@ -1,0 +1,70 @@
+<h3>新建酒店转帐记录</h3>
+<hr/>
+<%= simple_form_for @transfer, :html => {:class => "form-horizontal"} do |form| %>
+<h5>转账信息：</h5>
+<div class="well">
+<%= render "/transfers/form", :f => form %>
+
+ 	<div class="control-group">
+		<div class="controls" style="postion:center">
+			<button type="button" class="btn" onclick="window.history.back()">取消</button>
+	 	 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;  	
+			<button type="submit" class="btn btn-primary submiter">提交信息</button>
+		</div>     
+	</div> 
+</div>
+
+<script>
+		$(".submiter").click(function(){
+			 if (isblink($("#hotel-name").val())){
+			 	 $.alert("酒店名称不能为空，建议通过自动匹配填充！","提示", function(){
+			 	 	$("#hotel-name").select();
+			 	 });
+			 	 return false;
+			 };
+			 
+			 if (isblink($("#transfer_out_account").val())){
+			 	 $.alert("转出账号不能为空","提示", function(){
+			 	 	$("#transfer_out_account").select();
+			 	 });
+			 	 return false;
+			 };
+			 
+			 if (isblink($("#transfer_out_bank").val())){
+			 	 $.alert("转出银行不能为空","提示", function(){
+			 	 	$("#transfer_out_bank").select();
+			 	 });
+			 	 return false;
+			 };
+			 
+			 if (isblink($("#transfer_in_account").val())){
+			 	 $.alert("转入账号不能为空！","提示", function(){
+			 	 	$("#transfer_in_account").select();
+			 	 });
+			 	 return false;
+			 };
+			 
+			 if (isblink($("#transfer_in_bank").val())){
+			 	 $.alert("转入银行不能为空！","提示", function(){
+			 	 	$("#transfer_in_bank").select();
+			 	 });
+			 	 return false;
+			 };
+			 
+			 if (isblink($("#transfer-date").val())){
+			 	 $.alert("请选择创建时间！","提示", function(){
+			 	 	$("#transfer-date").select();
+			 	 });
+			 	 return false;
+			 };			 			 
+			 
+		  _cash = $("#transfer_amount").val();
+    	if(!(/^(\+|-)?\d+$/.test( _cash ))|| _cash <= 0) {
+    		$.alert("转账金额必须为正整数值且不能为0!","转账",function(){
+    			$("#transfer_amount").select();
+    		});
+    		return false;
+    	};
+	})
+</script>
+<% end %>

@@ -1,0 +1,32 @@
+%h3.span3 酒店管理
+%div.pull-right
+  -if can?(:new, Hotel)
+    = link_to '新建酒店', new_hotel_path
+%table.table.table-hover 
+  %tbody
+    %tr
+      %th='酒店名称'
+      %th='点数'
+      %th="总机"
+      %th="传真"
+      %th="地址"
+      %th="销售部电话"
+      %th="常用联系人"
+      %th="常用联系人电话"
+      
+   
+  - @hotels.each do |h|
+    %tr
+      %td= link_to h.name,  edit_hotel_path(h), :title => "点击编辑"
+      %td=format_money h.credit
+      %td=h.telephone
+      %td=h.fax
+      %td=h.addr
+      %td=h.sell_tel
+      %td=h.contact_name
+      %td=h.contact_tel
+=will_paginate @hotels    
+        
+        
+
+

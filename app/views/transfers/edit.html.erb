@@ -1,0 +1,9 @@
+<h3>查看酒店转帐记录</h3>
+<hr/>
+<%= simple_form_for @transfer, :url => "", :html => {:class => "form-horizontal"} do |form| %>
+<h5>转帐信息：</h5>
+<div class="well">
+	<%= render "/transfers/form", :f => form %>
+</div>
+
+<% end %>

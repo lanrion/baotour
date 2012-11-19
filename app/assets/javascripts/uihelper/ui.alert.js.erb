@@ -1,0 +1,38 @@
+// alert
+//
+// jquery
+// jquery.ui.dialog
+
+(function($) {
+
+	$.extend({ 
+		add:function(a,b){return a+b;} 
+	});
+
+  $.alert = function(message, title, callback) {
+    $(
+      '<div class="wd_zz bd_c6 alert">' +
+        '<div class="f16" style="text-align:left">' + message + '</div>' +
+      '</div>'
+    ).dialog({
+      autoOpen: true,
+			width: 250,
+			modal: true,
+			title: (title || "提示"),
+			draggable: false,
+			resizable: false,
+			buttons: {
+				"确定": function() {
+					$(this).dialog("close");
+                    if (callback){
+                        callback();
+                    }
+
+				}
+			},
+			close: function() {
+			  $(this).remove();
+			}
+    });
+  };
+})(jQuery);

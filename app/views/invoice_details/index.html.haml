@@ -1,0 +1,32 @@
+%h3{ :class => "span3"}查看 #{link_to @invoice.customer.name, "/customers/#{@invoice.customer.id}/edit", :target => "_blank"} 所有发票 
+%div.pull-right
+  
+%table.table.table-hover 
+  %tbody
+    %tr
+      %th='序号'
+      %th='文档编号'
+      %th='客户简称'
+      %th='抬头'
+      %th='项目'
+      %th='金额'
+      %th='日期'
+      %th='操作人'
+      %th='备注' 
+   
+  - @details.each do |c|
+    %tr
+      %td= c.id
+      %td= c.doc_ref
+      %td= c.aka
+      %td= c.title
+      %td= c.project
+      %td=format_money c.amount
+      %td= c.at
+      %td= c.creator
+      %td= c.memo
+=will_paginate @details    
+        
+        
+
+

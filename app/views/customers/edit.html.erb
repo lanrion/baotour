@@ -1,0 +1,204 @@
+<h3>编辑客户</h3>
+<hr/>
+<!--保存客户-->
+<div class="well">
+	<%= simple_form_for @customer, :html => {:class=>"form-horizontal",:onclick =>"return false"} do |form|%>
+		<h5>客户信息：</h5>
+		<%= render "/customers/form", :f => form %>
+		<div class="control-group">
+  	<div class="controls" style="postion:center">
+			<button type="button" customer-id="<%=@customer.id%>" id="update-customer" class="btn btn-primary">更新</button>
+		</div>	
+	</div>
+	<%end%>
+</div>
+
+<h5>计调信息：</h5>
+<div class="well">
+	<%= render :partial => "/operators/operator", :collection => @customer.operators%>
+	
+	<div class="control-group">
+	 <%= render "/operators/form" %>
+	</div> 
+	 	
+</div> 
+
+<h5>财务信息：</h5>
+<div class="well">
+	<%= render :partial => "/accounts/account", :collection => @customer.accounts%>
+
+	<div class="control-group">
+		 <%= render "/accounts/form" %>
+	</div> 
+</div>
+
+<script>
+
+	$("#update-customer").click(function(){
+	  var id = $(this).attr("customer-id");
+			ucustomer = {
+				'customer[name]':$("#customer_name").val(),
+				'customer[mobile]':$("#customer_mobile").val(),	
+				'customer[vip]':$("#customer_vip").val(),	
+				'customer[aka]':$("#customer_aka").val(),	
+				'customer[fax]':$("#customer_fax").val(),	
+				'customer[manager]':$("#customer_manager").val(),	
+				'customer[addr]':$("#customer_addr").val(),	
+				'customer[dob]':$("#customer_dob").val(),	
+				'customer[tel]':$("#customer_tel").val(),	
+				'customer[credit]':$("#customer_credit").val()
+		 	};
+		 	
+			$.confirm("你确认要更新此信息吗？",function(entrue){
+				if(entrue) {
+					$.ajax({
+						type: "put",
+						url: "/customers/"+id+".json",
+						dataType: "json",
+						data: ucustomer,
+						success: function(msg){
+							$.alert("更新成功!");
+						 },
+						error: function(msg){
+							var m = $.parseJSON(msg.responseText);
+							var message = "<ul>";
+							
+							if(m.vip != null) {
+								message = message + "<li>vip" + m.vip+"</li>"
+							};
+							
+							if(m.credit != null) {
+								message = message + "<li>credit" + m.credit+"</li>"
+							}
+							
+							if(m.tel != null){
+								message = message + "<li>客户手机号" + m.tel+"</li>";	
+							 };
+							 
+						　if(m.mobile != null) {
+								message = message + "<li>负责人手机号" + m.mobile+"</li>"
+							};
+							 
+							 message = message + "</ul>"
+							 $.alert(message);
+						
+						}
+					});
+				};
+			});
+	});
+	
+	$(".destroy-operator").click(function(){
+  var id = $(this).attr("data-id");
+  $.confirm("你确认删除此信息吗？",function(entrue){
+  	if(entrue) {
+  		$.ajax({
+				type: "post",
+				url: "/operators/destroy/"+id+".json",
+				dataType: "json",
+				//data: params,
+				success: function(msg){
+					$("button[data-id="+id+"]").parent().remove();			 
+				 },
+				error: function() {
+					$.alert("出错了");
+				}
+			 });
+			};
+		});
+	});
+	
+	$(".destroy-account").click(function(){
+			var id = $(this).attr("account-id");
+			$.confirm("你确认删除此信息吗？",function(entrue){
+				if(entrue) {
+					$.ajax({
+						type: "post",
+						url: "/accounts/destroy/"+id+".json",
+						dataType: "json",
+						//data: params,
+						success: function(msg){
+							$("button[account-id="+id+"]").parent().remove();			 
+						 },
+						error: function() {
+							$.alert("出错了");
+						}
+					});
+				};
+			});
+	});	
+	
+	$(".update-account").click(function(){
+			var id = $(this).attr("account-id");
+			uaccount = {
+				'account[name]':$("#ua_name"+id).val(),
+				'account[bank]':$("#ua_mobile"+id).val(),	
+				'account[acc]':$("#ua_dob"+id).val()	
+		 	};
+		 	
+			$.confirm("你确认要更新此信息吗？",function(entrue){
+				if(entrue) {
+					$.ajax({
+						type: "put",
+						url: "/accounts/"+id+".json",
+						dataType: "json",
+						data: uaccount,
+						success: function(msg){
+							if(msg.code == "10001") {
+								$.alert(msg.error);
+								return false;
+							}
+							$.alert(msg.error,"成功", function(){
+								window.location.reload();
+							});
+						 },
+						error: function(msg) {
+							$.alert("发生未知错误","错误", function(){
+								window.location.reload();
+							});
+						}
+					});
+				};
+			});
+	});
+	
+	$(".update-operator").click(function(){
+			var id = $(this).attr("operator-id");
+			uoperator = {
+				'operator[name]':$("#uop_name"+id).val(),
+				'operator[mobile]':$("#uop_mobile"+id).val(),	
+				'operator[DOB]':$("#uop_dob"+id).val()	
+		 	};
+		 	
+			$.confirm("你确认要更新此信息吗？",function(entrue){
+				if(entrue) {
+					$.ajax({
+						type: "put",
+						url: "/operators/"+id+".json",
+						dataType: "json",
+						data: uoperator,
+						success: function(msg){
+							$.alert("更新成功!");
+						 },
+						error: function(msg) {
+							var message = "<ul>";
+				
+							if($.parseJSON(msg.responseText).mobile != null) {
+								message = message + "<li>手机号" + $.parseJSON(msg.responseText).mobile+"</li>"
+							};
+				
+							if($.parseJSON(msg.responseText).name != null){
+								message = message + "<li>姓名" + $.parseJSON(msg.responseText).name+"</li>";	
+							 };
+							 
+							 message = message + "</ul>"
+							 $.alert(message);
+						}
+					});
+				};
+			});
+	});	
+	
+	
+	
+</script>	

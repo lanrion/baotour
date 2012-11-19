@@ -1,0 +1,46 @@
+<h3>新建发票</h3>
+<hr/>
+<%= simple_form_for @invoice_detail, :html => {:class => "form-horizontal"} do |form| %>
+<h5>发票内容：</h5>
+<%= render "/invoice_details/form", :f => form %>
+
+<% end %>
+<script>
+	$(".submiter").click(function(){
+		if(isblink($("#invoice_detail_title").val())){
+			
+			$.alert("发票头不能为空","验证出错",function(){
+				$("#invoice_detail_title").select();
+			});
+			return false;
+		};
+		
+		if(isblink($("#invoice_detail_doc_ref").val())){
+			
+			$.alert("发票编号不能为空","验证出错",function(){
+				$("#invoice_detail_doc_ref").select();
+			});
+			return false;
+		};
+		
+		_cash = $("#invoice_detail_amount").val();
+		
+		if(!(/^(\+|-)?\d+$/.test( _cash ))|| _cash <= 0) {
+			
+			$.alert("发票金额必须为正整数","验证出错",function(){
+				$("#invoice_detail_amount").select();
+			});
+			return false;
+		};
+		
+		if(isblink($("#invoice_detail_at").val())){
+			
+			$.alert("发票时间不能为空","验证出错",function(){
+				$("#invoice_detail_at").select();
+			});
+			return false;
+		};						
+		
+	})
+</script>
+

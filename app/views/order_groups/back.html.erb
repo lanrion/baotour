@@ -1,0 +1,118 @@
+<button id="uuid">UUID</button>
+
+<script>
+
+	$("#uuid").click(function(){
+		var uuid = Math.uuidFast();
+		$.alert(uuid);
+		
+	})
+</script>
+
+<br/>
+
+<hr size="1" noshade style="border:1px dashed #cccccc;"/>
+
+
+	var head = $("<div>").addClass("order-group").attr("data-id", _id);
+		var input_hidden = $("<input type='hidden'>").attr("name", "orgroup[][orgroup_id]").val(_id);
+		$(head).append(input_hidden);
+		
+		var cgroup1 = $("<div>").addClass("control-group").html("酒店名称:&nbsp;&nbsp;&nbsp;");
+		var cgroup2 = $("<div>").addClass("control-group").html("晚餐公式:&nbsp;&nbsp;&nbsp;");
+		
+		//select
+		var select = $("<select>").addClass("input-medium").attr("name", "orgroup[][hotel_id]");
+		$(select).append(options);
+	
+		$(cgroup1).append(select);
+		
+		var t1 = "&nbsp;&nbsp;&nbsp;第1天:&nbsp;&nbsp;&nbsp;";
+		$(cgroup1).append(t1);
+		
+		var day1 = $("<input type='text'>").attr("name", "orgroup[][day_1]").attr("placeholder", "计算公式").addClass("input-medium").attr("required", "required");
+		$(cgroup1).append(day1);
+		
+	  var t2 = "&nbsp;&nbsp;&nbsp;第2天:&nbsp;&nbsp;&nbsp;";
+		$(cgroup1).append(t2);
+		
+		var day2 = $("<input type='text'>").attr("name", "orgroup[][day_2]").attr("placeholder", "计算公式").addClass("input-medium").attr("required", "required");
+		$(cgroup1).append(day2);
+		
+		 var t3 = "&nbsp;&nbsp;&nbsp;第3天:&nbsp;&nbsp;&nbsp;";
+		$(cgroup1).append(t3);
+		var day3 = $("<input type='text'>").attr("name", "orgroup[][day_3]").attr("placeholder", "计算公式").addClass("input-medium").attr("required", "required");
+		$(cgroup1).append(day3);
+		
+		$(head).append(cgroup1);
+		
+		var dinner = $("<input type='text'>").attr("name", "orgroup[][dinner]").attr("placeholder", "计算公式").addClass("input-medium").attr("required", "required");
+		$(cgroup2).append(dinner);
+		
+	  var night1 = "&nbsp;&nbsp;&nbsp;&nbsp;间夜:&nbsp;&nbsp;&nbsp;";
+		$(cgroup2).append(night1);
+		
+		var night = $("<input type='text'>").attr("name", "orgroup[][night]").addClass("input-small").attr("required", "required");
+		$(cgroup2).append(night);		
+
+	  var fee1 = "&nbsp;&nbsp;&nbsp;&nbsp;小费:&nbsp;&nbsp;&nbsp;";
+		$(cgroup2).append(fee1);
+		
+		var fee = $("<input type='text'>").attr("name", "orgroup[][fee]").addClass("span1").attr("required", "required");
+		$(cgroup2).append(fee);	
+		
+	  var refs1 = "&nbsp;&nbsp;&nbsp;&nbsp;refs:&nbsp;&nbsp;&nbsp;";
+		$(cgroup2).append(refs1);
+		
+		var refs = $("<input type='text'>").attr("name", "orgroup[][refs]").addClass("span1").attr("required", "required");
+		$(cgroup2).append(refs);	
+		
+	  var sum1 = "&nbsp;&nbsp;&nbsp;&nbsp;总金额:&nbsp;&nbsp;&nbsp;";
+		$(cgroup2).append(sum1);
+		
+		var sum = $("<input type='text'>").attr("name", "orgroup[][sum]").addClass("span1").attr("required", "required");
+		$(cgroup2).append(sum);	
+		
+		$(cgroup2).append('&nbsp;&nbsp;&nbsp;&nbsp;');
+		$(cgroup2).append('<button type="button" data-id="'+_id+'" class="btn remove btn-danger">删除</button>');
+		$(cgroup2).append('&nbsp;&nbsp;<button type="button" class="btn btn-primary">添加明细</button>');
+		
+		$(head).append(cgroup2);
+		$(head).append("<hr>")
+		
+		
+	<div class="order-detail" data-id="<%@f_uuid%>">
+		<input type="hidden" name="order[][order_group_id]" value="<%=@f_uuid%>"/>
+	<!--第一排 -->
+	<div class="control-group">
+		客户名称:&nbsp;&nbsp;	
+		<select class="input-medium" name="order[][customer_id]">
+  　		<option value="">选择客户名称</option>
+  　		<%=	options_for_select(@customers.collect {|p| [ p.name, p.id ] }) %>
+  　</select>&nbsp;&nbsp;
+		第1天:&nbsp;&nbsp;
+    <input type="text" name="order[][creator]" placeholder="计算公式" required="required" class="input-medium">&nbsp;&nbsp;
+		第2天:&nbsp;&nbsp;
+    <input type="text" name="order[][date]" placeholder="计算公式" required="required" class="input-medium">&nbsp; &nbsp;
+		第3天:&nbsp;&nbsp;
+    <input type="text" name="order[][day_3]" placeholder="计算公式" required="required" class="input-medium">&nbsp;
+  </div>  
+  
+<!--第二排 -->    
+  <div class="control-group">  
+    晚餐公式:&nbsp;&nbsp;
+    <input type="text" name="order[][operator]" placeholder="计算公式" class="input-medium">&nbsp; &nbsp;
+    间夜:&nbsp;&nbsp;
+    <input type="text" name="order[][guide]" class="input-small">&nbsp;&nbsp;
+    小费:&nbsp;&nbsp;
+    <input type="text" name="order[][fee]" class="span1">&nbsp;&nbsp;
+   
+    总金额:&nbsp;&nbsp;
+    <input type="text" name="order[][sum]" class="span1">
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <button type="button" data-id="<%=@f_uuid%>" class="btn remove btn-danger">删除</button>
+    &nbsp;&nbsp;
+    <button type="button" class="btn btn-primary">添加明细</button> 
+  </div><hr/> 		
+		
+		

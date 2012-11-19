@@ -1,0 +1,54 @@
+= link_to "Baotour", root_path, :class => 'brand'
+%ul.nav
+  %li.dropdown
+    %a.dropdown-toggle{:href=>"#", "data-toggle"=>"dropdown"} 调度操作
+    %ul.dropdown-menu
+      %li
+        %a{:href=>orgroups_path} 计调排期
+
+  %li.dropdown
+    %a.dropdown-toggle{:href=>"#", "data-toggle"=>"dropdown"} 财务操作
+    %ul.dropdown-menu
+      %li
+        %a{:href=>transactions_path} 客户转账记录
+      %li
+        %a{:href=>"/refunds"} 退款记录
+      %li
+        %a{:href=>'/invoices'} 发票管理
+      %li
+        %a{:href=>"/transfers"} 酒店总账记录
+
+
+  %li.dropdown
+    %a.dropdown-toggle{:href=>"#", "data-toggle"=>"dropdown"} 查询操作
+    %ul.dropdown-menu
+      %li
+        %a{:href=>"/customer_usages"} 客户消费记录
+      %li
+        %a{:href=>"/orders/uncoverd_orders"} 未收款查询
+
+  %li.dropdown
+    %a.dropdown-toggle{:href=>"#", "data-toggle"=>"dropdown"} 管理操作
+    %ul.dropdown-menu
+      %li
+        %a{:href=>users_path} 用户管理
+      %li
+        %a{:href=> customers_path} 客户管理
+      %li
+        %a{:href=> hotels_path} 酒店管理
+
+%ul.nav.pull-right
+  - if user_signed_in?
+    %li
+      = link_to "#{current_user.name}(#{current_user.show_role})", "/users/#{current_user.id}"
+    %li
+      = link_to 'Logout', destroy_user_session_path, :method=>'delete'
+  - else
+    %li
+      = link_to 'Login', new_user_session_path
+  - if user_signed_in?
+    - if current_user.has_role? :admin
+      %li
+        = link_to 'Admin', users_path
+
+
